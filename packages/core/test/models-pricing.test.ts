@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { FakeAdapter, fakeProfile } from "../src/adapters/fake.js";
-import { ModelRegistry } from "../src/models.js";
-import { DEFAULT_PRICING, quoteCredits } from "../src/plans.js";
-import { isRegionExcluded } from "../src/regions.js";
-import { runGeneration } from "../src/workflow.js";
-import { setup } from "./helpers.js";
+import { FakeAdapter, fakeProfile } from "../src/adapters/fake";
+import { ModelRegistry } from "../src/models";
+import { DEFAULT_PRICING, quoteCredits } from "../src/plans";
+import { isRegionExcluded } from "../src/regions";
+import { runGeneration } from "../src/workflow";
+import { setup } from "./helpers";
 
 const adapter = (id: string, over = {}) => new FakeAdapter(fakeProfile({ id, name: id, ...over }));
 

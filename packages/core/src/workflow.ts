@@ -1,9 +1,9 @@
-import type { Ledger } from "./ledger.js";
-import { InsufficientCreditsError } from "./ledger.js";
-import { ModelError, type ModelRegistry, type SceneResult, type VideoModelAdapter } from "./models.js";
-import { checkPlanAllows, quoteCredits, type Addons, type Plan, type PricingConfig, type Quote } from "./plans.js";
-import { validatePlanIntegrity, type AspectRatio, type CreativePlan, type Mode } from "./plan.js";
-import { allocateCredits } from "./scenes.js";
+import type { Ledger } from "./ledger";
+import { InsufficientCreditsError } from "./ledger";
+import { ModelError, type ModelRegistry, type SceneResult, type VideoModelAdapter } from "./models";
+import { checkPlanAllows, quoteCredits, type Addons, type Plan, type PricingConfig, type Quote } from "./plans";
+import { validatePlanIntegrity, type AspectRatio, type CreativePlan, type Mode } from "./plan";
+import { allocateCredits } from "./scenes";
 
 export type GenerationStatus = "running" | "succeeded" | "partial" | "failed" | "rejected";
 

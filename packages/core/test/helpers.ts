@@ -1,10 +1,10 @@
-import { FakeAdapter, fakeProfile, type FakeBehavior } from "../src/adapters/fake.js";
-import { InMemoryLedger } from "../src/ledger.js";
-import { ModelRegistry } from "../src/models.js";
-import { DEFAULT_PLANS, DEFAULT_PRICING, quoteCredits } from "../src/plans.js";
-import { InMemoryGenerationStore, type GenerationRequest, type WorkflowDeps, type WorkflowEvent } from "../src/workflow.js";
-import { splitDuration } from "../src/scenes.js";
-import type { CreativePlan, Duration } from "../src/plan.js";
+import { FakeAdapter, fakeProfile, type FakeBehavior } from "../src/adapters/fake";
+import { InMemoryLedger } from "../src/ledger";
+import { ModelRegistry } from "../src/models";
+import { DEFAULT_PLANS, DEFAULT_PRICING, quoteCredits } from "../src/plans";
+import { InMemoryGenerationStore, type GenerationRequest, type WorkflowDeps, type WorkflowEvent } from "../src/workflow";
+import { splitDuration } from "../src/scenes";
+import type { CreativePlan, Duration } from "../src/plan";
 
 export function makePlan(duration: number, maxClip = 5, description = "A cat learns to skateboard"): CreativePlan {
   const durations = splitDuration(duration, maxClip);

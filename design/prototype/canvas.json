@@ -1,0 +1,101 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-04T18:10:00Z"
+  },
+  "title": "ClipNova.ai Prototype",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1800,
+      "title": "Create — idea → AI plan → generation → result",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Library.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1200,
+      "title": "Library — history, projects, reuse",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Pricing.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 1500,
+      "title": "Plans & credits",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ModelLab.dc.html": {
+      "x": 0,
+      "y": 2220,
+      "w": 1440,
+      "h": 1700,
+      "title": "Model Lab — capability matrix & benchmarking (internal)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Admin.dc.html": {
+      "x": 1520,
+      "y": 2220,
+      "w": 1440,
+      "h": 1500,
+      "title": "Admin — business & model analytics (internal)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Landing.dc.html": {
+      "x": -1520,
+      "y": 0,
+      "w": 1440,
+      "h": 3900,
+      "title": "Landing page — showcase, templates, languages, pricing",
+      "expand": "fill",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Landing.dc.html",
+    "Main.dc.html",
+    "Library.dc.html",
+    "Pricing.dc.html",
+    "ModelLab.dc.html",
+    "Admin.dc.html"
+  ],
+  "notes": {
+    "rowCreator": {
+      "x": -1520,
+      "y": -300,
+      "text": "Creator app",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "rowInternal": {
+      "x": 0,
+      "y": 1940,
+      "text": "Internal tools",
+      "kind": "title1",
+      "maxW": 2960
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Design System",
+      "namespace": "clipnova",
+      "artifact": "https://claude.ai/code/artifact/46bfb888-de7c-482d-8208-286f16c010ad",
+      "version": "1793815064-507a",
+      "copiedAt": "2026-11-04T18:10:00Z"
+    }
+  ]
+}

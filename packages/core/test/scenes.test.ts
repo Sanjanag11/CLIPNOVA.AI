@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { allocateCredits, splitDuration } from "../src/scenes.js";
-import { CreativePlanSchema, validatePlanIntegrity } from "../src/plan.js";
-import { makePlan } from "./helpers.js";
+import { allocateCredits, splitDuration } from "../src/scenes";
+import { CreativePlanSchema, validatePlanIntegrity } from "../src/plan";
+import { makePlan } from "./helpers";
 
 describe("splitDuration", () => {
   it.each([[4, 5, [4]], [6, 5, [3, 3]], [8, 5, [4, 4]], [12, 5, [4, 4, 4]], [30, 5, [5, 5, 5, 5, 5, 5]], [5, 5, [5]], [7, 5, [4, 3]]])(

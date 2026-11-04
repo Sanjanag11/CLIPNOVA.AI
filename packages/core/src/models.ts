@@ -1,5 +1,5 @@
-import { isRegionExcluded } from "./regions.js";
-import type { AspectRatio, CreativePlan, Mode, ScenePlan } from "./plan.js";
+import { isRegionExcluded } from "./regions";
+import type { AspectRatio, CreativePlan, Mode, ScenePlan } from "./plan";
 
 /** What a model can do. Validated by contract tests, never assumed. */
 export interface CapabilityProfile {

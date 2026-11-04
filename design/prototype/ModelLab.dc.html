@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClipNova — Model Lab</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/clipnova/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#101014}
+*{box-sizing:border-box}
+a{color:#C4B5FD}a:hover{color:#F5F4F7}
+button,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.45}
+:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hov:hover{background:#2B2933 !important}
+.pri:hover:not(:disabled){background:#C4B5FD !important}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #101014; color: #F5F4F7; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap;">
+
+<nav aria-label="Main" style="flex: 1 1 220px; background: #19191F; border-right: 1px solid #34323D; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px;">
+  <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; text-decoration: none; color: #F5F4F7;">
+    <img src="/_blob/36779f839e1cb213f8b54240c55095f8" alt="" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em;">ClipNova<span style="color: #A78BFA;">.ai</span></span>
+  </a>
+  <a class="hov" href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Create</a>
+  <a class="hov" href="Library.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>Library</a>
+  <a class="hov" href="Pricing.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5h4.5a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3H15"></path></svg>Plans &amp; credits</a>
+  <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #A5A2AF; padding: 20px 12px 6px;">Internal</div>
+  <a href="ModelLab.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #F5F4F7; background: #2B2933; font-size: 15px; font-weight: 600;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: #A78BFA;"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"></path></svg>Model Lab</a>
+  <a class="hov" href="Admin.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Admin</a>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em;">Model Lab</h1>
+    <p style="margin: 0; font-size: 16px; color: #A5A2AF;">Run one prompt and reference across compatible models, score the outputs, and feed results into Auto model selection.</p>
+  </div>
+
+  <!-- Benchmark run -->
+  <section style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 600;">New benchmark run</h2>
+      <div role="tablist" aria-label="Generation type" style="display: flex; gap: 6px; background: #101014; border: 1px solid #34323D; border-radius: 10px; padding: 4px;">
+        <sc-for list="{{types}}" as="ty" hint-placeholder-count="3">
+          <button role="tab" aria-selected="{{ty.aria}}" onClick="{{ty.pick}}" style="min-height: 40px; padding: 0 14px; border-radius: 8px; border: 0; background: {{ty.bg}}; color: {{ty.fg}}; font-size: 14px; font-weight: 600;">{{ty.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+      <div style="flex: 2 1 420px; display: flex; flex-direction: column; gap: 8px;">
+        <label for="bp" style="font-size: 14px; font-weight: 600;">Shared prompt</label>
+        <textarea id="bp" rows="3" value="{{prompt}}" onChange="{{onPrompt}}" style="background: #101014; border: 1px solid #34323D; border-radius: 8px; padding: 12px; font-size: 14px; line-height: 1.5; resize: vertical;"></textarea>
+        <span style="font-size: 13px; color: #A5A2AF;">Each model receives this through its own prompt adapter — same creative intent, model-specific phrasing.</span>
+      </div>
+      <div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 14px; font-weight: 600;">Settings</span>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 13px;">
+          <span style="background: #222129; border-radius: 8px; padding: 10px;"><span style="display: block; color: #A5A2AF;">Duration</span>5 s</span>
+          <span style="background: #222129; border-radius: 8px; padding: 10px;"><span style="display: block; color: #A5A2AF;">Resolution</span>480p</span>
+          <span style="background: #222129; border-radius: 8px; padding: 10px;"><span style="display: block; color: #A5A2AF;">Seed</span>42 (fixed)</span>
+          <span style="background: #222129; border-radius: 8px; padding: 10px;"><span style="display: block; color: #A5A2AF;">Repeats</span>3 per model</span>
+        </div>
+      </div>
+    </div>
+    <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+      <legend style="font-size: 14px; font-weight: 600; padding: 0 0 10px;">Models · {{selCount}} selected · incompatible models are disabled</legend>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{pickers}}" as="pk" hint-placeholder-count="9">
+          <button aria-pressed="{{pk.aria}}" disabled="{{pk.off}}" onClick="{{pk.pick}}" style="min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid {{pk.bd}}; background: {{pk.bg}}; color: {{pk.fg}}; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;">
+            <sc-if value="{{pk.on}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px;"><path d="M5 12l5 5 9-10"></path></svg></sc-if>{{pk.name}}</button>
+        </sc-for>
+      </div>
+    </fieldset>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+      <button class="pri" disabled="{{cantRun}}" onClick="{{run}}" style="min-height: 48px; padding: 0 22px; border-radius: 10px; border: 0; background: #A78BFA; color: #101014; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; fill: currentColor;"><path d="M8 5v14l11-7z"></path></svg>{{runLabel}}</button>
+      <span style="font-size: 13px; color: #A5A2AF;">Estimated GPU cost: {{estCost}} · runs on the inference cluster, not the app server</span>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Results</h2>
+      <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #FBBF24; border: 1px solid #FBBF24; padding: 4px 10px; border-radius: 999px;">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px;"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>Illustrative sample — replace with real runs</span>
+    </div>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 900px;">
+        <thead>
+          <tr style="text-align: left; color: #A5A2AF;">
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Model</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Status</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Prompt adherence</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Visual</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Motion</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Character consistency</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Temporal</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Latency</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Fail rate</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">GPU cost / clip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{results}}" as="r" hint-placeholder-count="5">
+            <tr>
+              <th scope="row" style="text-align: left; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #34323D; white-space: nowrap;">{{r.name}}</th>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: {{r.stColor}}; font-weight: 600; white-space: nowrap;">{{r.status}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.pa}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.vq}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.mq}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.cc}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.tc}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.lat}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.fail}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{r.cost}}</td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <span style="font-size: 13px; color: #A5A2AF;">Scores 1–5: automated (CLIP/VLM judge, optical-flow, face-embedding similarity) blended with blind human ratings.</span>
+  </section>
+
+  <!-- Capability matrix -->
+  <section style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Capability profiles</h2>
+      <span style="font-size: 13px; color: #A5A2AF;">From public model cards — every row must be validated before it can be routed to users</span>
+    </div>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1040px;">
+        <thead>
+          <tr style="text-align: left; color: #A5A2AF;">
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Model</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Text</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Image</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Video</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Variants</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Output (native)</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Licence</th>
+            <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Validation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{matrix}}" as="m" hint-placeholder-count="9">
+            <tr>
+              <th scope="row" style="text-align: left; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #34323D; white-space: nowrap;">{{m.name}}</th>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: {{m.tC}}; font-weight: 600;">{{m.t}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: {{m.iC}}; font-weight: 600;">{{m.i}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: {{m.vC}}; font-weight: 600;">{{m.v}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: #A5A2AF;">{{m.variants}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: #A5A2AF;">{{m.out}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{m.lic}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;"><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #FBBF24; white-space: nowrap;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>To validate</span></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+    <span style="font-size: 13px; color: #A5A2AF;">“Partial” = supported through a separate variant or pipeline (e.g. reference-guided, continuation or control), not general video-to-video.</span>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1700}}'>
+const MATRIX = [
+  { id: 'wan', name: 'Wan 2.2', t: 'Yes', i: 'Yes', v: 'Partial', variants: 'T2V-A14B, I2V-A14B, TI2V-5B, Animate-14B', out: '480p / 720p · ~5 s', lic: 'Apache 2.0' },
+  { id: 'ltx', name: 'LTX-Video / LTX-2', t: 'Yes', i: 'Yes', v: 'Yes', variants: '2B, 13B (+ distilled), LTX-2', out: 'Up to 1216×704 · extendable', lic: 'Open-weights licence — revenue threshold' },
+  { id: 'hunyuan', name: 'HunyuanVideo 1.5', t: 'Yes', i: 'Yes', v: 'No', variants: '8.3B T2V, I2V, step-distilled', out: '480p / 720p (+ SR to 1080p)', lic: 'Tencent community licence — territory limits' },
+  { id: 'cog', name: 'CogVideoX', t: 'Yes', i: 'Yes', v: 'Partial', variants: '2B, 5B, 5B-I2V, 1.5-5B', out: '720×480 / 1360×768 · 6–10 s', lic: '2B Apache 2.0 · 5B custom licence' },
+  { id: 'vace', name: 'VACE', t: 'Yes', i: 'Yes', v: 'Yes', variants: 'Wan2.1-VACE 1.3B / 14B', out: '480p / 720p · ~5 s', lic: 'Apache 2.0' },
+  { id: 'svd', name: 'Stable Video Diffusion XT', t: 'No', i: 'Yes', v: 'No', variants: 'SVD-XT, SVD-XT 1.1', out: '576×1024 · 25 frames', lic: 'Stability community licence — revenue cap' },
+  { id: 'longcat', name: 'LongCat-Video', t: 'Yes', i: 'Yes', v: 'Partial', variants: '13.6B', out: '720p · 30 fps · long continuation', lic: 'MIT' },
+  { id: 'mochi', name: 'Mochi 1', t: 'Yes', i: 'No', v: 'No', variants: '10B preview', out: '480p · ~5.4 s · 30 fps', lic: 'Apache 2.0' },
+  { id: 'opensora', name: 'Open-Sora 2.0', t: 'Yes', i: 'Yes', v: 'No', variants: '11B', out: '256px / 768px · ~5 s', lic: 'Apache 2.0' }
+];
+const SAMPLE = {
+  wan: ['4.4', '4.3', '4.2', '3.9', '4.1', '3m 10s', '2%', '[GPU $]'],
+  ltx: ['3.7', '3.8', '3.9', '3.4', '3.8', '0m 25s', '1%', '[GPU $]'],
+  hunyuan: ['4.3', '4.5', '4.0', '3.8', '4.0', '4m 40s', '3%', '[GPU $]'],
+  cog: ['3.8', '3.6', '3.5', '3.5', '3.6', '2m 50s', '2%', '[GPU $]'],
+  vace: ['4.1', '4.1', '4.0', '4.2', '4.1', '3m 30s', '3%', '[GPU $]'],
+  svd: ['—', '3.9', '3.4', '4.0', '3.7', '0m 50s', '1%', '[GPU $]'],
+  longcat: ['4.0', '4.0', '4.1', '3.9', '4.3', '5m 20s', '4%', '[GPU $]'],
+  mochi: ['3.9', '3.9', '4.2', '3.5', '3.9', '6m 10s', '5%', '[GPU $]'],
+  opensora: ['3.6', '3.5', '3.6', '3.3', '3.5', '3m 40s', '6%', '[GPU $]']
+};
+const TYPES = [{ id: 't', label: 'Text' }, { id: 'i', label: 'Image' }, { id: 'v', label: 'Video' }];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { type: 't', sel: ['wan', 'ltx', 'hunyuan', 'mochi'], prompt: 'Two friends share an umbrella at a rain-soaked Mumbai bus stop; one jokes, the other laughs. Medium shot, soft neon reflections.', phase: 'idle' };
+  }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); }
+  renderVals() {
+    const s = this.state;
+    const ok = (m) => m[s.type] !== 'No';
+    const sel = s.sel.filter((id) => ok(MATRIX.find((m) => m.id === id)));
+    const color = (v) => (v === 'Yes' ? '#34D399' : v === 'Partial' ? '#FBBF24' : '#A5A2AF');
+    const types = TYPES.map((t) => ({ ...t, aria: String(s.type === t.id), bg: s.type === t.id ? '#2B2933' : 'transparent', fg: s.type === t.id ? '#F5F4F7' : '#A5A2AF',
+      pick: () => this.setState({ type: t.id, phase: 'idle' }) }));
+    const pickers = MATRIX.map((m) => {
+      const on = sel.includes(m.id), off = !ok(m);
+      return { name: m.name, on, off, aria: String(on), bd: on ? '#A78BFA' : '#34323D', bg: on ? '#2B2933' : '#101014', fg: on ? '#F5F4F7' : '#A5A2AF',
+        pick: () => this.setState({ sel: on ? s.sel.filter((x) => x !== m.id) : [...s.sel, m.id], phase: 'idle' }) };
+    });
+    const results = sel.map((id, idx) => {
+      const m = MATRIX.find((x) => x.id === id);
+      const d = SAMPLE[id];
+      let status = 'Not run', stColor = '#A5A2AF', show = false;
+      if (s.phase === 'running') { status = idx % 2 === 0 ? 'Rendering' : 'Queued'; stColor = '#C4B5FD'; }
+      if (s.phase === 'done') { status = 'Done · 3/3'; stColor = '#34D399'; show = true; }
+      const v = (k) => (show ? d[k] : '—');
+      return { name: m.name, status, stColor, pa: v(0), vq: v(1), mq: v(2), cc: v(3), tc: v(4), lat: v(5), fail: v(6), cost: v(7) };
+    });
+    const matrix = MATRIX.map((m) => ({ ...m, tC: color(m.t), iC: color(m.i), vC: color(m.v) }));
+    return {
+      types, pickers, results, matrix, selCount: sel.length,
+      prompt: s.prompt, onPrompt: (e) => this.setState({ prompt: e.target.value }),
+      cantRun: sel.length < 2 || s.phase === 'running',
+      runLabel: s.phase === 'running' ? 'Running…' : 'Run on ' + sel.length + ' models',
+      estCost: '[GPU $] × ' + sel.length * 3 + ' clips',
+      run: () => {
+        this.setState({ phase: 'running' });
+        clearTimeout(this.t1);
+        this.t1 = setTimeout(() => this.setState({ phase: 'done' }), 1800);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

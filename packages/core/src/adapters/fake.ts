@@ -1,4 +1,4 @@
-import { ModelError, type CapabilityProfile, type SceneRequest, type SceneResult, type VideoModelAdapter } from "../models.js";
+import { ModelError, type CapabilityProfile, type SceneRequest, type SceneResult, type VideoModelAdapter } from "../models";
 
 export interface FakeBehavior {
   /** Number of initial attempts per scene that fail before one succeeds. */

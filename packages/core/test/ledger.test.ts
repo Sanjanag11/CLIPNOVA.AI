@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { InMemoryLedger, InsufficientCreditsError, LedgerInvariantError } from "../src/ledger.js";
+import { InMemoryLedger, InsufficientCreditsError, LedgerInvariantError } from "../src/ledger";
 
 describe("credit ledger", () => {
   it("grants and reserves", async () => {

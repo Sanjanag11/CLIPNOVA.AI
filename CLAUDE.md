@@ -33,7 +33,13 @@ Application hosting never runs models. Generation is always asynchronous.
 Repo layout:
 - `packages/core`  Business logic, no I/O: Creative Plan schema, credit ledger, plans/pricing,
   model contract + registry, generation workflow. In-memory implementations for tests.
-- (planned) `apps/web`, `apps/api`, `workers/inference` (Python), `workers/media`.
+- `apps/web`       Next.js 16 app. `app/_screens/*.tsx` are GENERATED from the prototype (see below).
+  `app/api/quote` and `app/api/generate` run the core workflow against a DEMO set of fake model adapters
+  (`lib/service.ts`); the generated Create screen does not call them yet.
+- `design/prototype` Source of truth for the UI: the six `.dc.html` screens exported from the design canvas.
+- `tools/dc2react.mjs` Converts `design/prototype/*.dc.html` into React screens. To change the UI: edit the prototype
+  file (or re-export it from the canvas), run `node tools/dc2react.mjs`, never hand-edit `_screens/`.
+- (planned) `apps/api`, `workers/inference` (Python), `workers/media`.
 
 ## Rules that must not be broken
 1. No model-specific logic outside a `VideoModelAdapter`. The workflow only sees `CapabilityProfile` + the adapter interface.
@@ -50,9 +56,15 @@ Repo layout:
 
 ## Commands
 - `npm install`
-- `npm test`          run all package tests
+- `npm test`          run all package tests (core: vitest)
+- `npm run dev -w @clipnova/web`   run the web app on :3000
+- `node tools/dc2react.mjs`        regenerate screens from design/prototype
 - `npm run typecheck` typecheck all packages
 
 ## Status
-Milestone 1.1 in progress: core domain + workflow done and tested (49 tests) with a fake adapter; aligned to the prototype pricing/plans and region-aware licences.
-Not built yet: web app, API, auth, DB, storage, real GPU adapter (Wan 2.2 TI2V-5B), LLM planner, ffmpeg composer.
+Milestone 1.1 in progress.
+Done and tested: core domain + workflow (49 vitest tests, fake adapters); all six prototype screens running in Next.js
+(browser-checked: no console errors, Create flow compose -> plan -> generate -> done, navigation, pricing toggle).
+The screens still run the prototype's own SIMULATED logic and sample data (e.g. Admin numbers, Library items, the Riya scene plan).
+Not built yet: wiring the Create screen to the real workflow/API, auth, DB, storage, real GPU adapter (Wan 2.2 TI2V-5B),
+LLM planner, ffmpeg composer, moderation providers, payments.

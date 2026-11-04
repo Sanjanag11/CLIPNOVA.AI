@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { FakeAdapter, fakeProfile } from "../src/adapters/fake.js";
-import { DEFAULT_PLANS, checkPlanAllows } from "../src/plans.js";
-import { runGeneration } from "../src/workflow.js";
-import { expectedBase, makePlan, setup } from "./helpers.js";
+import { FakeAdapter, fakeProfile } from "../src/adapters/fake";
+import { DEFAULT_PLANS, checkPlanAllows } from "../src/plans";
+import { runGeneration } from "../src/workflow";
+import { expectedBase, makePlan, setup } from "./helpers";
 
 describe("runGeneration", () => {
   it("happy path: 8s video becomes 2 scenes, is composed, and charges the full quote", async () => {

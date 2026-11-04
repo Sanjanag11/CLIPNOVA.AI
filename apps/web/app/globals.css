@@ -1,0 +1,3 @@
+/* Screens bring their own styles (generated from the prototype). Global resets only. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: #101014; color: #F5F4F7; font-family: Inter, system-ui, sans-serif; }

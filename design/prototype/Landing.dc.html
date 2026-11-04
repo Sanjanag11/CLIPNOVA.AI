@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClipNova — Landing</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/clipnova/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+Devanagari:wght@600&amp;family=Noto+Sans+Kannada:wght@600&amp;family=Noto+Sans+Gujarati:wght@600&amp;family=Noto+Sans+Bengali:wght@600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#101014}
+*{box-sizing:border-box}
+a{color:#C4B5FD}a:hover{color:#F5F4F7}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hov:hover{background:#2B2933 !important}
+.pri:hover{background:#C4B5FD !important}
+.tpl:hover{border-color:#A78BFA !important}
+input::placeholder{color:#A5A2AF}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #101014; color: #F5F4F7; font-family: Inter, 'Noto Sans Devanagari', 'Noto Sans Kannada', 'Noto Sans Gujarati', 'Noto Sans Bengali', system-ui, sans-serif;">
+
+<!-- Nav -->
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 32px; max-width: 1360px; margin: 0 auto;">
+  <a href="Landing.dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #F5F4F7;">
+    <img src="/_blob/36779f839e1cb213f8b54240c55095f8" alt="" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
+    <span style="font-size: 19px; font-weight: 700; letter-spacing: -0.01em;">ClipNova<span style="color: #A78BFA;">.ai</span></span>
+  </a>
+  <nav aria-label="Site" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px;">
+    <a class="hov" href="#templates" style="min-height: 44px; padding: 0 14px; border-radius: 8px; display: flex; align-items: center; text-decoration: none; color: #F5F4F7; font-size: 15px; font-weight: 500;">Templates</a>
+    <a class="hov" href="#languages" style="min-height: 44px; padding: 0 14px; border-radius: 8px; display: flex; align-items: center; text-decoration: none; color: #F5F4F7; font-size: 15px; font-weight: 500;">Languages</a>
+    <a class="hov" href="#pricing" style="min-height: 44px; padding: 0 14px; border-radius: 8px; display: flex; align-items: center; text-decoration: none; color: #F5F4F7; font-size: 15px; font-weight: 500;">Pricing</a>
+    <a class="hov" href="Main.dc.html" style="min-height: 44px; padding: 0 14px; border-radius: 8px; display: flex; align-items: center; text-decoration: none; color: #F5F4F7; font-size: 15px; font-weight: 500;">Log in</a>
+    <a class="pri" href="Main.dc.html" style="min-height: 44px; padding: 0 18px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; color: #101014; background: #A78BFA; font-size: 15px; font-weight: 700; margin-left: 6px;">Start free</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section style="position: relative; overflow: hidden; padding: 56px 32px 0;">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 0%, rgba(167,139,250,0.18) 0%, rgba(16,16,20,0) 70%);"></div>
+  <div style="position: relative; max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center;">
+    <h1 style="margin: 0; font-size: clamp(40px, 6vw, 76px); line-height: 1.02; font-weight: 800; letter-spacing: -0.035em;">Your idea.<br>A video people stop scrolling for.</h1>
+    <p style="margin: 0; font-size: clamp(17px, 2vw, 20px); line-height: 1.5; color: #A5A2AF; max-width: 640px;">Describe it, or drop in a photo or clip. ClipNova writes the scenes, keeps your characters consistent and adds voice, music and captions in your language.</p>
+    <form style="width: 100%; max-width: 720px; display: flex; flex-wrap: wrap; gap: 8px; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 8px; margin-top: 8px;">
+      <label for="hero-idea" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Describe your video idea</label>
+      <input id="hero-idea" placeholder="A biscuit and a cup of chai fall in love on a busy street…" style="flex: 1 1 320px; min-width: 0; min-height: 52px; background: transparent; border: 0; outline: none; padding: 0 12px; font-size: 16px;">
+      <a class="pri" href="Main.dc.html" style="flex: 0 0 auto; min-height: 52px; padding: 0 22px; border-radius: 10px; background: #A78BFA; color: #101014; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; text-decoration: none;">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Create free</a>
+    </form>
+    <span style="font-size: 14px; color: #A5A2AF;">120 free credits · no card needed · Text, Image &amp; Video to Video</span>
+  </div>
+
+  <!-- Showcase wall -->
+  <div style="position: relative; max-width: 1360px; margin: 56px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; align-items: end;">
+    <sc-for list="{{wall}}" as="w" hint-placeholder-count="6">
+      <a href="Main.dc.html" class="tpl" style="position: relative; display: block; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; border: 1px solid #34323D; background: #19191F; transform: translateY({{w.lift}}); text-decoration: none; color: #F5F4F7;">
+        <sc-if value="{{w.contain}}" hint-placeholder-val="{{false}}">
+          <img src="{{w.img}}" alt="" aria-hidden="true" style="position: absolute; inset: -20px; width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover; filter: blur(16px) brightness(0.55);">
+        </sc-if>
+        <img src="{{w.img}}" alt="{{w.alt}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: {{w.fit}}; object-position: {{w.pos}};">
+        <span style="position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: rgba(16,16,20,0.8); padding: 5px 10px; border-radius: 999px;">
+          <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 12px; height: 12px; fill: currentColor;"><path d="M8 5v14l11-7z"></path></svg>{{w.tag}}</span>
+      </a>
+    </sc-for>
+  </div>
+  <div aria-hidden="true" style="position: relative; height: 64px; margin-top: -64px; background: linear-gradient(180deg, rgba(16,16,20,0) 0%, #101014 100%);"></div>
+</section>
+
+<!-- Three ways in -->
+<section style="max-width: 1360px; margin: 0 auto; padding: 72px 32px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+  <sc-for list="{{ways}}" as="wy" hint-placeholder-count="3">
+    <a class="tpl" href="Main.dc.html" style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: #F5F4F7;">
+      <span style="width: 44px; height: 44px; border-radius: 12px; background: #2B2933; color: #C4B5FD; display: flex; align-items: center; justify-content: center;">
+        <sc-if value="{{wy.isText}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"></path></svg></sc-if>
+        <sc-if value="{{wy.isImage}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="M21 16l-5-5-9 9"></path></svg></sc-if>
+        <sc-if value="{{wy.isVideo}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"></rect><path d="M16 10l5-3v10l-5-3z"></path></svg></sc-if>
+      </span>
+      <span style="font-size: 20px; font-weight: 700;">{{wy.title}}</span>
+      <span style="font-size: 15px; color: #A5A2AF; line-height: 1.5;">{{wy.body}}</span>
+    </a>
+  </sc-for>
+</section>
+
+<!-- Templates -->
+<section id="templates" style="max-width: 1360px; margin: 0 auto; padding: 96px 32px 0; display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h2 style="margin: 0; font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.025em;">Start from a template</h2>
+      <p style="margin: 0; font-size: 17px; color: #A5A2AF;">Pick one, swap in your story, generate.</p>
+    </div>
+    <div role="tablist" aria-label="Template category" style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{cats}}" as="c" hint-placeholder-count="6">
+        <button role="tab" aria-selected="{{c.aria}}" onClick="{{c.pick}}" style="min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{c.bd}}; background: {{c.bg}}; color: {{c.fg}}; font-size: 14px; font-weight: 600;">{{c.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+    <sc-for list="{{templates}}" as="t" hint-placeholder-count="7">
+      <article class="tpl" style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: #222129;">
+          <sc-if value="{{t.contain}}" hint-placeholder-val="{{false}}">
+            <img src="{{t.img}}" alt="" aria-hidden="true" style="position: absolute; inset: -20px; width: calc(100% + 40px); height: calc(100% + 40px); object-fit: cover; filter: blur(16px) brightness(0.55);">
+          </sc-if>
+          <img src="{{t.img}}" alt="{{t.alt}}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: {{t.fit}}; object-position: {{t.pos}};">
+          <span style="position: absolute; top: 10px; right: 10px; font-size: 12px; font-weight: 600; background: rgba(16,16,20,0.8); padding: 4px 8px; border-radius: 6px;">{{t.dur}}</span>
+        </div>
+        <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3;">{{t.title}}</h3>
+            <span style="font-size: 13px; color: #A5A2AF;">{{t.cat}} · {{t.lang}}</span>
+          </div>
+          <a class="hov" href="Main.dc.html" style="min-height: 44px; border-radius: 8px; border: 1px solid #34323D; background: #222129; color: #F5F4F7; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; text-decoration: none;">Use template</a>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+</section>
+
+<!-- Languages -->
+<section id="languages" style="max-width: 1360px; margin: 0 auto; padding: 96px 32px 0;">
+  <div style="background: #19191F; border: 1px solid #34323D; border-radius: 24px; padding: clamp(24px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
+    <div style="flex: 1 1 380px; display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.08;">Create in the language you think in</h2>
+      <p style="margin: 0; font-size: 17px; color: #A5A2AF; line-height: 1.55;">Write your idea in any of these languages, or mix them. Hinglish works too. ClipNova understands what you mean, then adds the voiceover and captions in the same language.</p>
+      <div role="radiogroup" aria-label="Preview a language" style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <sc-for list="{{langs}}" as="l" hint-placeholder-count="6">
+          <button role="radio" aria-checked="{{l.aria}}" onClick="{{l.pick}}" lang="{{l.code}}" style="min-height: 48px; padding: 0 18px; border-radius: 999px; border: 1px solid {{l.bd}}; background: {{l.bg}}; color: {{l.fg}}; font-size: 16px; font-weight: 600;">{{l.native}}</button>
+        </sc-for>
+      </div>
+      <span style="font-size: 14px; color: #A5A2AF;">More Indian languages coming soon.</span>
+    </div>
+    <div style="flex: 1 1 300px; display: flex; justify-content: center;">
+      <div style="position: relative; width: 260px; aspect-ratio: 9 / 16; border-radius: 20px; overflow: hidden; border: 1px solid #34323D;">
+        <img src="/_blob/040a848b5d5e09f68e106c0bbe31f9d0" alt="Exam Hall Friend example video" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+        <div style="position: absolute; left: 12px; right: 12px; bottom: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <span lang="{{curCode}}" style="background: rgba(16,16,20,0.85); color: #F5F4F7; font-size: 17px; font-weight: 700; padding: 8px 12px; border-radius: 10px; text-align: center; line-height: 1.35;">{{curLine}}</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; background: rgba(16,16,20,0.85); padding: 4px 10px; border-radius: 999px;">
+            <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px;"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>{{curName}} voiceover + captions</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section style="max-width: 1360px; margin: 0 auto; padding: 96px 32px 0; display: flex; flex-direction: column; gap: 28px;">
+  <h2 style="margin: 0; font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.025em;">From idea to upload in three steps</h2>
+  <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+    <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+      <li style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 14px; font-weight: 700; color: #C4B5FD;">Step {{st.n}}</span>
+        <span style="font-size: 20px; font-weight: 700;">{{st.title}}</span>
+        <span style="font-size: 15px; color: #A5A2AF; line-height: 1.5;">{{st.body}}</span>
+      </li>
+    </sc-for>
+  </ol>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" style="max-width: 1360px; margin: 0 auto; padding: 96px 32px 0; display: flex; flex-direction: column; gap: 28px;">
+  <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center;">
+    <h2 style="margin: 0; font-size: clamp(30px, 4vw, 44px); font-weight: 800; letter-spacing: -0.025em;">Pay for what you create</h2>
+    <p style="margin: 0; font-size: 17px; color: #A5A2AF;">Credits are only spent when a video is ready. Failed scenes are refunded.</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 1040px; width: 100%; margin: 0 auto;">
+    <sc-for list="{{plans}}" as="p" hint-placeholder-count="3">
+      <div style="background: {{p.bg}}; border: {{p.border}}; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <span style="font-size: 18px; font-weight: 700;">{{p.name}}</span>
+          <sc-if value="{{p.popular}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 700; color: #101014; background: #A78BFA; padding: 4px 10px; border-radius: 999px;">Most popular</span></sc-if>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 44px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;">{{p.credits}}</span>
+          <span style="font-size: 14px; color: #A5A2AF;">credits / month · about {{p.videos}} videos</span>
+        </div>
+        <span style="font-size: 15px; line-height: 1.5;">{{p.line}}</span>
+        <div style="flex-grow: 1;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid #34323D; padding-top: 16px;">
+          <span style="font-size: 18px; font-weight: 700;">{{p.price}}</span>
+          <a class="{{p.cls}}" href="{{p.href}}" style="min-height: 44px; padding: 0 18px; border-radius: 10px; display: flex; align-items: center; text-decoration: none; font-size: 14px; font-weight: 700; background: {{p.btnBg}}; color: {{p.btnFg}}; border: {{p.btnBd}};">{{p.cta}}</a>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <a href="Pricing.dc.html" style="align-self: center; font-size: 15px; font-weight: 600;">Compare all plans and credit costs</a>
+</section>
+
+<!-- Closing CTA + footer -->
+<section style="max-width: 1360px; margin: 0 auto; padding: 96px 32px 64px; display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center;">
+  <h2 style="margin: 0; font-size: clamp(32px, 4.5vw, 52px); font-weight: 800; letter-spacing: -0.03em;">Your first video is free.</h2>
+  <a class="pri" href="Main.dc.html" style="min-height: 56px; padding: 0 28px; border-radius: 12px; background: #A78BFA; color: #101014; display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 32px rgba(167,139,250,0.3);">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Start creating</a>
+</section>
+<footer style="border-top: 1px solid #34323D;">
+  <div style="max-width: 1360px; margin: 0 auto; padding: 24px 32px; display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; font-size: 14px; color: #A5A2AF;">
+    <span>© ClipNova.ai</span>
+    <span style="display: flex; flex-wrap: wrap; gap: 20px;"><a href="#templates">Templates</a><a href="Pricing.dc.html">Pricing</a><a href="#languages">Languages</a><a href="Main.dc.html">Log in</a></span>
+  </div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3900}}'>
+const IMG = {
+  exam: '/_blob/040a848b5d5e09f68e106c0bbe31f9d0', chai: '/_blob/45855143bda6b4cb5eb8b6560cbe99fb', vamp: '/_blob/2aa6e81ba93531558244fa1e848bf5e6',
+  gym: '/_blob/962567c07cd3edfc724cf19479a15b18', grandma: '/_blob/89d22cce3824d374a2427300e665f658', coffee: '/_blob/692dbc5333c04f54640558211deb4909',
+  hostel: '/_blob/b3d3b383af9c3f689c520a53b4b4e067'
+};
+const TPL = [
+  { id: 'exam', title: 'Exam Hall Friend', cat: 'Comedy', dur: '8s', lang: 'Hindi', alt: 'Cartoon students at exam desks', tag: 'Comedy' },
+  { id: 'chai', title: 'Chinni & Sakar', cat: 'Romance', dur: '12s', lang: 'Bengali', alt: 'A biscuit and a cup of chai walking together down a street', tag: 'Romance', contain: true },
+  { id: 'gym', title: 'Gym Mirror, Future Body', cat: 'Motivation', dur: '6s', lang: 'Hinglish', alt: 'A man sees his muscular future self in a gym mirror', tag: 'Motivation' },
+  { id: 'vamp', title: 'Curse or Luck: Wife of the Vampire', cat: 'Drama', dur: '12s', lang: 'English', alt: 'A vampire embraces a tearful woman by a rainy window', tag: 'Drama', contain: true },
+  { id: 'coffee', title: 'Signature Coffee Promo', cat: 'Promotional', dur: '12s', lang: 'English', alt: 'A latte with leaf art and a floating café menu', tag: 'Promo', contain: true },
+  { id: 'grandma', title: 'Grandma’s Recipe', cat: 'Lifestyle', dur: '8s', lang: 'Gujarati', alt: 'A grandmother and daughter cooking in a clay-stove kitchen', tag: 'Lifestyle' },
+  { id: 'hostel', title: 'Sheeru’s Haunted Hostel', cat: 'Comedy', dur: '8s', lang: 'English', alt: 'A lion, a tiger and a buffalo walk in front of a haunted mansion', tag: 'Fantasy', contain: true }
+];
+const CATS = ['All', 'Comedy', 'Romance', 'Drama', 'Motivation', 'Promotional', 'Lifestyle'];
+const LANGS = [
+  { name: 'English', native: 'English', code: 'en', line: 'Exam postponed?! Then why did I run?!' },
+  { name: 'Hindi', native: 'हिन्दी', code: 'hi', line: 'पेपर पोस्टपोन?! तो मैं भागी क्यों?!' },
+  { name: 'Marathi', native: 'मराठी', code: 'mr', line: 'पेपर पुढे ढकलला?! मग मी का पळाले?!' },
+  { name: 'Kannada', native: 'ಕನ್ನಡ', code: 'kn', line: 'ಪರೀಕ್ಷೆ ಮುಂದೂಡಲಾಗಿದೆಯಾ?! ಹಾಗಾದರೆ ನಾನೇಕೆ ಓಡಿದೆ?!' },
+  { name: 'Gujarati', native: 'ગુજરાતી', code: 'gu', line: 'પેપર મુલતવી?! તો હું કેમ દોડી?!' },
+  { name: 'Bengali', native: 'বাংলা', code: 'bn', line: 'পরীক্ষা পিছিয়ে গেছে?! তাহলে দৌড়ালাম কেন?!' }
+];
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { cat: 'All', lang: 'Hindi' }; }
+  renderVals() {
+    const s = this.state;
+    const withImg = (t) => ({ ...t, img: IMG[t.id], fit: t.contain ? 'contain' : 'cover', pos: t.id === 'exam' ? 'center top' : 'center', contain: !!t.contain });
+    const lifts = ['0px', '-32px', '-12px', '-48px', '-12px', '-32px', '0px'];
+    const wall = ['grandma', 'exam', 'gym', 'chai', 'coffee', 'hostel'].map((id, i) => ({ ...withImg(TPL.find((t) => t.id === id)), lift: lifts[i] }));
+    const seg = (on) => ({ bd: on ? '#A78BFA' : '#34323D', bg: on ? '#2B2933' : '#19191F', fg: on ? '#F5F4F7' : '#A5A2AF', aria: String(on) });
+    const cats = CATS.map((c) => ({ label: c, ...seg(s.cat === c), pick: () => this.setState({ cat: c }) }));
+    const templates = TPL.filter((t) => s.cat === 'All' || t.cat === s.cat).map(withImg);
+    const langs = LANGS.map((l) => ({ ...l, ...seg(s.lang === l.name), bg: s.lang === l.name ? '#2B2933' : '#101014', pick: () => this.setState({ lang: l.name }) }));
+    const cur = LANGS.find((l) => l.name === s.lang);
+    const ways = [
+      { isText: true, title: 'Text to Video', body: 'Write a line, a story or a script. Get a multi-scene video with the same characters in every shot.' },
+      { isImage: true, title: 'Image to Video', body: 'Bring a photo, product shot or poster to life with the motion you describe.' },
+      { isVideo: true, title: 'Video to Video', body: 'Restyle your own clip: anime, new background, new mood. Your movement stays.' }
+    ];
+    const steps = [
+      { n: 1, title: 'Describe or pick a template', body: 'Type your idea in your language, upload an image or clip, or start from a template.' },
+      { n: 2, title: 'Review the AI scene plan', body: 'See the characters, scenes and voiceover before anything is generated. Change what you like.' },
+      { n: 3, title: 'Generate, tweak, post', body: 'Redo a single scene if it’s not right, then download for Reels, Shorts or TikTok.' }
+    ];
+    const plans = [
+      { name: 'Free', credits: '120', videos: '2', line: 'Videos up to 12 s, all languages, with a watermark.', price: '₹0', cta: 'Start free', href: 'Main.dc.html', bg: '#19191F', border: '1px solid #34323D', cls: 'hov', btnBg: '#222129', btnFg: '#F5F4F7', btnBd: '1px solid #34323D' },
+      { name: 'Creator', credits: '900', videos: '16', line: '30-second videos, 1080p, no watermark, scene regeneration.', price: '[PRICE] / mo', cta: 'Get Creator', href: 'Pricing.dc.html', popular: true, bg: '#222129', border: '1.5px solid #A78BFA', cls: 'pri', btnBg: '#A78BFA', btnFg: '#101014', btnBd: '0' },
+      { name: 'Pro', credits: '2,500', videos: '46', line: 'Commercial use, character library, fastest queue.', price: '[PRICE] / mo', cta: 'Get Pro', href: 'Pricing.dc.html', bg: '#19191F', border: '1px solid #34323D', cls: 'hov', btnBg: '#222129', btnFg: '#F5F4F7', btnBd: '1px solid #34323D' }
+    ].map((p) => ({ ...p, popular: !!p.popular }));
+    return { wall, cats, templates, langs, curLine: cur.line, curCode: cur.code, curName: cur.name, ways, steps, plans };
+  }
+}
+</script>
+</body>
+</html>

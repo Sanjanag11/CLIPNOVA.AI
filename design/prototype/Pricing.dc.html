@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClipNova — Plans and credits</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/clipnova/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#101014}
+*{box-sizing:border-box}
+a{color:#C4B5FD}a:hover{color:#F5F4F7}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hov:hover{background:#2B2933 !important}
+.pri:hover{background:#C4B5FD !important}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #101014; color: #F5F4F7; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap;">
+
+<nav aria-label="Main" style="flex: 1 1 220px; background: #19191F; border-right: 1px solid #34323D; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px;">
+  <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; text-decoration: none; color: #F5F4F7;">
+    <img src="/_blob/36779f839e1cb213f8b54240c55095f8" alt="" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em;">ClipNova<span style="color: #A78BFA;">.ai</span></span>
+  </a>
+  <a class="hov" href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Create</a>
+  <a class="hov" href="Library.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>Library</a>
+  <a href="Pricing.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #F5F4F7; background: #2B2933; font-size: 15px; font-weight: 600;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: #A78BFA;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5h4.5a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3H15"></path></svg>Plans &amp; credits</a>
+  <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #A5A2AF; padding: 20px 12px 6px;">Internal</div>
+  <a class="hov" href="ModelLab.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"></path></svg>Model Lab</a>
+  <a class="hov" href="Admin.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Admin</a>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: 40px 32px; display: flex; flex-direction: column; gap: 40px; align-items: center;">
+  <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center; max-width: 720px;">
+    <h1 style="margin: 0; font-size: 40px; font-weight: 800; letter-spacing: -0.02em;">Simple plans. Transparent credits.</h1>
+    <p style="margin: 0; font-size: 17px; color: #A5A2AF; line-height: 1.5;">You always see the credit cost before generating. Credits are held, not spent, until your video is ready — failed scenes are refunded automatically.</p>
+    <div role="radiogroup" aria-label="Billing period" style="display: flex; gap: 4px; background: #19191F; border: 1px solid #34323D; border-radius: 999px; padding: 4px; margin-top: 8px;">
+      <button role="radio" aria-checked="{{mAria}}" onClick="{{pickM}}" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: {{mBg}}; color: {{mFg}}; font-size: 14px; font-weight: 600;">Monthly</button>
+      <button role="radio" aria-checked="{{yAria}}" onClick="{{pickY}}" style="min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: {{yBg}}; color: {{yFg}}; font-size: 14px; font-weight: 600;">Yearly · 2 months free</button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: 100%; max-width: 1120px;">
+    <sc-for list="{{plans}}" as="p" hint-placeholder-count="3">
+      <section style="background: {{p.bg}}; border: {{p.border}}; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 20px; position: relative;">
+        <sc-if value="{{p.popular}}" hint-placeholder-val="{{false}}">
+          <span style="position: absolute; top: -13px; left: 28px; background: #A78BFA; color: #101014; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px;">Most popular</span>
+        </sc-if>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <h2 style="margin: 0; font-size: 20px; font-weight: 700;">{{p.name}}</h2>
+          <span style="font-size: 14px; color: #A5A2AF;">{{p.tag}}</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 6px;">
+          <span style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em;">{{p.price}}</span>
+          <span style="font-size: 14px; color: #A5A2AF;">{{p.per}}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; background: #101014; border-radius: 10px; padding: 12px 14px;">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: #A78BFA;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5h4.5a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3H15"></path></svg>
+          <span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 16px; font-weight: 700;">{{p.credits}} credits / month</span><span style="font-size: 13px; color: #A5A2AF;">{{p.approx}}</span></span>
+        </div>
+        <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+          <sc-for list="{{p.features}}" as="ft" hint-placeholder-count="5">
+            <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45;">
+              <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 18px; height: 18px; color: #34D399; margin-top: 1px;"><path d="M5 12l5 5 9-10"></path></svg>{{ft}}</li>
+          </sc-for>
+        </ul>
+        <div style="flex-grow: 1;"></div>
+        <sc-if value="{{p.current}}" hint-placeholder-val="{{false}}">
+          <span style="min-height: 48px; border-radius: 10px; border: 1px solid #34323D; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: #A5A2AF;">Your current plan</span>
+        </sc-if>
+        <sc-if value="{{p.upgrade}}" hint-placeholder-val="{{true}}">
+          <button class="{{p.btnClass}}" style="min-height: 48px; border-radius: 10px; border: {{p.btnBorder}}; background: {{p.btnBg}}; color: {{p.btnFg}}; font-size: 15px; font-weight: 700;">{{p.cta}}</button>
+        </sc-if>
+      </section>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 24px; width: 100%; max-width: 1120px; align-items: flex-start;">
+    <section style="flex: 999 1 480px; min-width: 0; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">What things cost</h2>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 420px;">
+          <thead><tr style="text-align: left; color: #A5A2AF;"><th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Action</th><th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Credits</th><th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">8-second example</th></tr></thead>
+          <tbody>
+            <sc-for list="{{costs}}" as="c" hint-placeholder-count="6">
+              <tr><th scope="row" style="text-align: left; padding: 12px 8px; font-weight: 500; border-bottom: 1px solid #34323D;">{{c.a}}</th><td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: #A5A2AF;">{{c.r}}</td><td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{c.ex}}</td></tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+      <span style="font-size: 13px; color: #A5A2AF;">Scene plans, previews of your AI plan and captions are always free.</span>
+    </section>
+    <section style="flex: 1 1 320px; min-width: 0; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">Top-up packs</h2>
+      <sc-for list="{{packs}}" as="k" hint-placeholder-count="3">
+        <button class="hov" style="min-height: 56px; border-radius: 10px; border: 1px solid #34323D; background: #222129; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; font-size: 15px;">
+          <span style="font-weight: 600;">{{k.c}} credits</span><span style="color: #A5A2AF;">{{k.p}}</span></button>
+      </sc-for>
+      <span style="font-size: 13px; color: #A5A2AF;">Top-up credits never expire. Paid via UPI, cards and netbanking.</span>
+    </section>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"currentPlan":{"editor":"enum","options":["Free","Creator","Pro"],"default":"Free"},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { yearly: false }; }
+  renderVals() {
+    const y = this.state.yearly;
+    const current = this.props.currentPlan ?? 'Free';
+    const defs = [
+      { name: 'Free', tag: 'Try ClipNova', price: '₹0', per: 'forever', credits: 120, approx: 'About 2 eight-second videos',
+        features: ['Text, Image and Video to Video', 'Videos up to 12 seconds', '720p export with watermark', 'All 6 languages, preset voices', 'Standard queue'] },
+      { name: 'Creator', tag: 'For growing creators', price: y ? '[PRICE]/yr' : '[PRICE]', per: y ? 'billed yearly' : 'per month', credits: 900, approx: 'About 16 eight-second videos', popular: true,
+        features: ['Everything in Free', '30-second videos', '1080p, no watermark', 'Regenerate individual scenes', 'Choose your model', 'Priority queue'] },
+      { name: 'Pro', tag: 'For brands and small teams', price: y ? '[PRICE]/yr' : '[PRICE]', per: y ? 'billed yearly' : 'per month', credits: 2500, approx: 'About 46 eight-second videos',
+        features: ['Everything in Creator', 'Commercial-use licence', 'Character library across projects', 'Consent-verified voice cloning (coming soon)', 'Fastest queue'] }
+    ];
+    const plans = defs.map((d) => {
+      const isCur = d.name === current;
+      return { ...d, popular: !!d.popular, current: isCur, upgrade: !isCur,
+        bg: d.popular ? '#222129' : '#19191F', border: d.popular ? '1.5px solid #A78BFA' : '1px solid #34323D',
+        cta: d.name === 'Free' ? 'Switch to Free' : 'Upgrade to ' + d.name,
+        btnClass: d.popular ? 'pri' : 'hov', btnBg: d.popular ? '#A78BFA' : '#222129', btnFg: d.popular ? '#101014' : '#F5F4F7', btnBorder: d.popular ? '0' : '1px solid #34323D' };
+    });
+    const costs = [
+      { a: 'Video — fast models (LTX-Video)', r: '3 / second', ex: '24' },
+      { a: 'Video — standard (CogVideoX, Open-Sora)', r: '4 / second', ex: '32' },
+      { a: 'Video — high quality (Wan 2.2, VACE)', r: '6 / second', ex: '48' },
+      { a: 'Video — cinematic (HunyuanVideo 1.5, LongCat)', r: '7 / second', ex: '56' },
+      { a: 'AI voiceover', r: '1 / 4 seconds', ex: '2' },
+      { a: 'Music + sound effects', r: '3 / video', ex: '3' }
+    ];
+    const packs = [{ c: 300, p: '[PRICE]' }, { c: 1000, p: '[PRICE]' }, { c: 3000, p: '[PRICE]' }];
+    const on = (v) => (v ? '#A78BFA' : 'transparent');
+    const fg = (v) => (v ? '#101014' : '#A5A2AF');
+    return { plans, costs, packs,
+      mAria: String(!y), yAria: String(y), mBg: on(!y), yBg: on(y), mFg: fg(!y), yFg: fg(y),
+      pickM: () => this.setState({ yearly: false }), pickY: () => this.setState({ yearly: true }) };
+  }
+}
+</script>
+</body>
+</html>

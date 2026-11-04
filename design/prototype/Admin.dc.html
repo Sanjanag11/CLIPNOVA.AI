@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ClipNova — Admin</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/clipnova/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#101014}
+*{box-sizing:border-box}
+a{color:#C4B5FD}a:hover{color:#F5F4F7}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hov:hover{background:#2B2933 !important}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #101014; color: #F5F4F7; font-family: Inter, system-ui, sans-serif; display: flex; flex-wrap: wrap;">
+
+<nav aria-label="Main" style="flex: 1 1 220px; background: #19191F; border-right: 1px solid #34323D; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px;">
+  <a href="Main.dc.html" style="display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; text-decoration: none; color: #F5F4F7;">
+    <img src="/_blob/36779f839e1cb213f8b54240c55095f8" alt="" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
+    <span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em;">ClipNova<span style="color: #A78BFA;">.ai</span></span>
+  </a>
+  <a class="hov" href="Main.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"></path></svg>Create</a>
+  <a class="hov" href="Library.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>Library</a>
+  <a class="hov" href="Pricing.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5h4.5a1.5 1.5 0 0 1 0 3h-3a1.5 1.5 0 0 0 0 3H15"></path></svg>Plans &amp; credits</a>
+  <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #A5A2AF; padding: 20px 12px 6px;">Internal</div>
+  <a class="hov" href="ModelLab.dc.html" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #A5A2AF; font-size: 15px; font-weight: 500;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"></path></svg>Model Lab</a>
+  <a href="Admin.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 8px; text-decoration: none; color: #F5F4F7; background: #2B2933; font-size: 15px; font-weight: 600;">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: #A78BFA;"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>Admin</a>
+</nav>
+
+<main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em;">Admin</h1>
+      <span style="display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #FBBF24; border: 1px solid #FBBF24; padding: 4px 10px; border-radius: 999px;">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 14px; height: 14px;"><path d="M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>Illustrative sample data</span>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+      <div role="tablist" aria-label="View" style="display: flex; gap: 4px; background: #19191F; border: 1px solid #34323D; border-radius: 10px; padding: 4px;">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+          <button role="tab" aria-selected="{{t.aria}}" onClick="{{t.pick}}" style="min-height: 40px; padding: 0 14px; border-radius: 8px; border: 0; background: {{t.bg}}; color: {{t.fg}}; font-size: 14px; font-weight: 600;">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <div role="radiogroup" aria-label="Period" style="display: flex; gap: 4px; background: #19191F; border: 1px solid #34323D; border-radius: 10px; padding: 4px;">
+        <sc-for list="{{periods}}" as="pd" hint-placeholder-count="3">
+          <button role="radio" aria-checked="{{pd.aria}}" onClick="{{pd.pick}}" style="min-height: 40px; padding: 0 12px; border-radius: 8px; border: 0; background: {{pd.bg}}; color: {{pd.fg}}; font-size: 14px; font-weight: 600;">{{pd.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUSINESS -->
+  <sc-if value="{{isBiz}}" hint-placeholder-val="{{true}}">
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+      <sc-for list="{{kpis}}" as="k" hint-placeholder-count="8">
+        <div style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 13px; color: #A5A2AF; font-weight: 500;">{{k.label}}</span>
+          <span style="font-size: 28px; font-weight: 700; letter-spacing: -0.02em;">{{k.value}}</span>
+          <span style="font-size: 13px; color: {{k.dColor}}; font-weight: 600;">{{k.delta}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch;">
+      <section style="flex: 1 1 420px; min-width: 0; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">Activation funnel</h2>
+        <sc-for list="{{funnel}}" as="f" hint-placeholder-count="5">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; font-size: 14px;"><span>{{f.label}}</span><span style="color: #A5A2AF;">{{f.n}} · <span style="color: #F5F4F7; font-weight: 600;">{{f.pct}}</span></span></div>
+            <div style="height: 12px; background: #222129; border-radius: 999px;"><div style="height: 12px; width: {{f.pct}}; background: #A78BFA; border-radius: 999px;"></div></div>
+          </div>
+        </sc-for>
+      </section>
+      <section style="flex: 1 1 420px; min-width: 0; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">Retention &amp; feature adoption</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+          <sc-for list="{{retention}}" as="r" hint-placeholder-count="3">
+            <div style="background: #222129; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 13px; color: #A5A2AF;">{{r.k}}</span><span style="font-size: 22px; font-weight: 700;">{{r.v}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-for list="{{adoption}}" as="a" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; gap: 12px; font-size: 14px;">
+            <span style="flex: 0 0 170px;">{{a.label}}</span>
+            <div style="flex: 1; height: 10px; background: #222129; border-radius: 999px;"><div style="height: 10px; width: {{a.pct}}; background: #C4B5FD; border-radius: 999px;"></div></div>
+            <span style="flex: 0 0 44px; text-align: right; color: #A5A2AF;">{{a.pct}}</span>
+          </div>
+        </sc-for>
+      </section>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- MODELS -->
+  <sc-if value="{{isModels}}" hint-placeholder-val="{{false}}">
+  <section style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+    <h2 style="margin: 0; font-size: 18px; font-weight: 600;">Model performance in production</h2>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px; min-width: 860px;">
+        <thead><tr style="text-align: left; color: #A5A2AF;">
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Model</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Traffic share</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Success rate</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Latency p50 / p95</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Quality score</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">User “Love it”</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Cost / successful video</th>
+          <th scope="col" style="padding: 10px 8px; font-weight: 600; border-bottom: 1px solid #34323D;">Routing</th>
+        </tr></thead>
+        <tbody>
+          <sc-for list="{{models}}" as="m" hint-placeholder-count="6">
+            <tr>
+              <th scope="row" style="text-align: left; padding: 12px 8px; font-weight: 600; border-bottom: 1px solid #34323D; white-space: nowrap;">{{m.name}}</th>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{m.share}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D; color: {{m.sColor}}; font-weight: 600;">{{m.success}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{m.lat}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{m.q}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">{{m.love}}</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">[COST]</td>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #34323D;">
+                <button class="hov" aria-pressed="{{m.aria}}" onClick="{{m.toggle}}" style="min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid {{m.rBd}}; background: #222129; font-size: 13px; font-weight: 600; color: {{m.rFg}};">{{m.routing}}</button></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  </sc-if>
+
+  <!-- JOBS -->
+  <sc-if value="{{isJobs}}" hint-placeholder-val="{{false}}">
+  <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start;">
+    <section style="flex: 999 1 560px; min-width: 0; background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 600;">Failed jobs</h2>
+      <sc-for list="{{jobs}}" as="j" hint-placeholder-count="5">
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: #222129; border-radius: 12px; padding: 12px 14px; font-size: 14px;">
+          <span style="font-weight: 600; flex: 0 0 96px;">{{j.id}}</span>
+          <span style="flex: 1 1 200px; color: #A5A2AF;">{{j.model}} · {{j.err}}</span>
+          <span style="flex: 0 0 140px; display: inline-flex; align-items: center; gap: 6px; color: #34D399; font-weight: 600;"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width: 16px; height: 16px;"><path d="M5 12l5 5 9-10"></path></svg>{{j.refund}}</span>
+          <span style="flex: 0 0 90px; color: #A5A2AF;">{{j.when}}</span>
+        </div>
+      </sc-for>
+    </section>
+    <section style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+      <sc-for list="{{ops}}" as="o" hint-placeholder-count="4">
+        <div style="background: #19191F; border: 1px solid #34323D; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 13px; color: #A5A2AF;">{{o.k}}</span>
+          <span style="font-size: 24px; font-weight: 700;">{{o.v}}</span>
+          <span style="font-size: 13px; color: #A5A2AF;">{{o.sub}}</span>
+        </div>
+      </sc-for>
+    </section>
+  </div>
+  </sc-if>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 'biz', period: '30d', paused: {} }; }
+  renderVals() {
+    const s = this.state;
+    const seg = (cur, id) => ({ aria: String(cur === id), bg: cur === id ? '#2B2933' : 'transparent', fg: cur === id ? '#F5F4F7' : '#A5A2AF' });
+    const tabs = [['biz', 'Business'], ['models', 'Models'], ['jobs', 'Jobs & safety']].map(([id, label]) => ({ label, ...seg(s.tab, id), pick: () => this.setState({ tab: id }) }));
+    const periods = ['7d', '30d', '90d'].map((id) => ({ label: id, ...seg(s.period, id), pick: () => this.setState({ period: id }) }));
+    const up = '#34D399', down = '#F87171';
+    const kpis = [
+      { label: 'Sign-ups', value: '12,480', delta: '▲ 18% vs prev.', dColor: up },
+      { label: 'First-generation activation', value: '61%', delta: '▲ 4 pts', dColor: up },
+      { label: 'Time to first success (median)', value: '4m 12s', delta: '▼ 38s faster', dColor: up },
+      { label: 'Generation success rate', value: '96.8%', delta: '▼ 0.4 pts', dColor: down },
+      { label: 'Videos per active user', value: '5.3', delta: '▲ 0.6', dColor: up },
+      { label: 'Free → paid conversion', value: '3.9%', delta: '▲ 0.3 pts', dColor: up },
+      { label: 'Revenue', value: '[REVENUE]', delta: 'Connect payments', dColor: '#A5A2AF' },
+      { label: 'Cost per successful video', value: '[COST]', delta: 'From inference billing', dColor: '#A5A2AF' }
+    ];
+    const funnel = [
+      { label: 'Visited sign-up', n: '41,200', pct: '100%' },
+      { label: 'Created account', n: '12,480', pct: '30%' },
+      { label: 'Reviewed an AI plan', n: '9,110', pct: '22%' },
+      { label: 'First successful video', n: '7,610', pct: '18%' },
+      { label: 'Became paid', n: '487', pct: '1%' }
+    ];
+    const retention = [{ k: 'D1', v: '42%' }, { k: 'D7', v: '23%' }, { k: 'D30', v: '11%' }];
+    const adoption = [
+      { label: 'Text to Video', pct: '78%' }, { label: 'Image to Video', pct: '41%' }, { label: 'Video to Video', pct: '17%' },
+      { label: 'Scene regeneration', pct: '29%' }, { label: 'Non-English voiceover', pct: '46%' }
+    ];
+    const base = [
+      ['Wan 2.2', '38%', '97.9%', '2m 50s / 5m 10s', '4.3', '71%'],
+      ['VACE', '14%', '96.2%', '3m 20s / 6m 00s', '4.1', '66%'],
+      ['LTX-Video', '19%', '99.1%', '0m 22s / 0m 48s', '3.7', '52%'],
+      ['HunyuanVideo 1.5', '17%', '95.4%', '4m 30s / 8m 40s', '4.4', '74%'],
+      ['CogVideoX', '7%', '97.0%', '2m 40s / 4m 30s', '3.6', '49%'],
+      ['Mochi 1', '5%', '93.1%', '5m 50s / 11m 20s', '3.9', '58%']
+    ];
+    const models = base.map(([name, share, success, lat, q, love]) => {
+      const paused = !!s.paused[name];
+      return { name, share, success, lat, q, love, sColor: parseFloat(success) < 95 ? '#FBBF24' : '#F5F4F7',
+        routing: paused ? 'Paused' : 'Live', aria: String(!paused), rBd: paused ? '#FBBF24' : '#34D399', rFg: paused ? '#FBBF24' : '#34D399',
+        toggle: () => this.setState({ paused: { ...s.paused, [name]: !paused } }) };
+    });
+    const jobs = [
+      { id: '#CN-48190', model: 'Mochi 1', err: 'GPU out of memory after 3 attempts', refund: '42 cr refunded', when: '12 min ago' },
+      { id: '#CN-48177', model: 'VACE', err: 'Input video failed moderation', refund: '52 cr refunded', when: '31 min ago' },
+      { id: '#CN-48152', model: 'HunyuanVideo 1.5', err: 'Worker timeout (15 min)', refund: '84 cr refunded', when: '1 h ago' },
+      { id: '#CN-48120', model: 'Wan 2.2', err: 'Scene 3 retried, stitched with fallback', refund: '7 cr refunded', when: '2 h ago' },
+      { id: '#CN-48098', model: 'LTX-Video', err: 'Prompt blocked: real public figure', refund: '0 cr held', when: '3 h ago' }
+    ];
+    const ops = [
+      { k: 'Queue depth', v: '128 jobs', sub: 'p95 wait 1m 40s' },
+      { k: 'Credits refunded', v: '3,920 cr', sub: '1.6% of credits used' },
+      { k: 'Moderation blocks', v: '214', sub: 'Public figures, minors, copyrighted characters' },
+      { k: 'Voice-clone requests', v: 'Disabled', sub: 'Launches with consent verification' }
+    ];
+    return { tabs, periods, isBiz: s.tab === 'biz', isModels: s.tab === 'models', isJobs: s.tab === 'jobs', kpis, funnel, retention, adoption, models, jobs, ops };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import type { Duration, Mode } from "./plan.js";
+import type { Duration, Mode } from "./plan";
 
 /**
  * Plans and pricing are DATA. Changing a price, credit grant or limit means
