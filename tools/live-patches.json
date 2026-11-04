@@ -1,0 +1,20 @@
+{
+  "_doc": "Declarative edits applied to generated screens. A patch replaces the text from `start` through `end` (both must occur exactly once). `$ORIGINAL` in `replace` is the replaced text. If the prototype changes so a patch no longer matches, generation fails loudly.",
+  "Main": {
+    "imports": ["import LivePlayer from \"../_live/LivePlayer\";"],
+    "patches": [
+      {
+        "name": "real video player (falls back to the prototype's placeholder when there is no real video)",
+        "start": "<div style={css(`position: relative; aspect-ratio: ${v.previewRatio};",
+        "end": "{\"Preview placeholder — the generated clip plays here\"}</span>",
+        "replace": "{v.videoUrl ? (<LivePlayer key={v.videoUrl} url={v.videoUrl} ratio={v.previewRatio} />) : (<>$ORIGINAL</>)}"
+      },
+      {
+        "name": "working Download MP4 link when there is a real video",
+        "start": "<button className={\"pri\"} style={{\"minHeight\":\"48px\",\"padding\":\"0 20px\",\"borderRadius\":\"10px\",\"border\":\"0\",\"background\":\"#A78BFA\"",
+        "end": "{\"Download MP4\"}</button>",
+        "replace": "{v.downloadUrl ? (<a className={\"pri\"} href={v.downloadUrl} download={\"clipnova-video.mp4\"} style={{\"minHeight\":\"48px\",\"padding\":\"0 20px\",\"borderRadius\":\"10px\",\"border\":\"0\",\"background\":\"#A78BFA\",\"color\":\"#101014\",\"fontSize\":\"15px\",\"fontWeight\":\"700\",\"display\":\"flex\",\"alignItems\":\"center\",\"gap\":\"8px\",\"textDecoration\":\"none\"}}><svg className={\"ic\"} viewBox={\"0 0 24 24\"} aria-hidden={\"true\"}><path d={\"M12 4v12M7 11l5 5 5-5M4 20h16\"} /></svg>{\"Download MP4\"}</a>) : (<>$ORIGINAL</>)}"
+      }
+    ]
+  }
+}

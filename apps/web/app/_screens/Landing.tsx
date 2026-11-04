@@ -5,6 +5,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { DCLogic, css } from "@/lib/dc";
 
+
 const STYLES = "body{margin:0;background:#101014}\n*{box-sizing:border-box}\na{color:#C4B5FD}a:hover{color:#F5F4F7}\nbutton,input{font:inherit;color:inherit}\nbutton{cursor:pointer}\n:focus-visible{outline:2px solid #A78BFA;outline-offset:2px}\n.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}\n.hov:hover{background:#2B2933 !important}\n.pri:hover{background:#C4B5FD !important}\n.tpl:hover{border-color:#A78BFA !important}\ninput::placeholder{color:#A5A2AF}";
 
 /* ---- prototype logic (verbatim) ---- */

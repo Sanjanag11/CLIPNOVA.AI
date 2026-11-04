@@ -121,7 +121,11 @@ class LiveMain extends Component {
     }
     if (!this.state.live.me && !this.meRequested) {
       this.meRequested = true;
-      this.api("/api/me").then((r) => { if (this.mounted && r.ok) this.setLive({ me: r.data }); });
+      this.api("/api/me").then((r) => {
+        if (!this.mounted || !r.ok) return;
+        this.setLive({ me: r.data });
+        (this.props.onEngine as ((e: string) => void) | undefined)?.(r.data.engine);
+      });
     }
   }
   meRequested = false;
@@ -243,10 +247,13 @@ class LiveMain extends Component {
     const balance: number = L.me?.balance?.available ?? v.balance;
     const lines: { label: string; credits: number }[] = L.quote?.quote?.lines ?? [];
     const sum = (...labels: string[]) => lines.filter((l) => labels.includes(l.label)).reduce((a, l) => a + l.credits, 0);
+    // When the engine can't make audio yet the server leaves it out of the price; say so instead of "0 cr".
+    const priced = (label: string) => lines.some((l) => l.label === label);
+    const audioValue = (on: boolean, labels: string[]) => (!on ? "Off" : labels.some(priced) ? `${sum(...labels)} cr` : "Coming soon");
     const costLines = L.quote?.quote ? [
       { label: lines[0]?.label ?? "Video", value: `${lines[0]?.credits ?? 0} cr` },
-      { label: "Voiceover", value: s.voice ? `${sum("Voiceover")} cr` : "Off" },
-      { label: "Music + sound effects", value: s.music || s.sfx ? `${sum("Music", "Sound effects")} cr` : "Off" },
+      { label: "Voiceover", value: audioValue(!!s.voice, ["Voiceover"]) },
+      { label: "Music + sound effects", value: audioValue(!!(s.music || s.sfx), ["Music", "Sound effects"]) },
       { label: "Captions", value: s.captions ? "Free" : "Off" },
     ] : v.costLines;
     const cantGen = total > balance;
@@ -295,6 +302,8 @@ class LiveMain extends Component {
       const busy = !!L.regenBusy[sc.index] || !!sc.busy;
       return { num: sc.index + 1, text: textFor(sc.index), time: `${from}–${t0}s`, cost: sc.regenCredits, busy, idle: !busy, regen: () => this.doRegen(sc.index) };
     });
+    const out: string | undefined = job?.outputUri;
+    const videoUrl = out && out.startsWith("/api/videos/") ? out : undefined;
     const pct = job?.progress ?? 0;
     const rate = (up: boolean) => () => {
       this.setState({ rating: up ? "up" : "down" });
@@ -312,7 +321,7 @@ class LiveMain extends Component {
       models, savings, hasSavings: savings.length > 0,
       detectedLang: detected.label,
       blockMsg: v.blockMsg || L.planError || (L.quoteError && !v.blockMsg ? L.quoteError : ""),
-      cantPlan: !!v.blockMsg || L.planning,
+      cantPlan: !!v.blockMsg || L.planning || !!L.quoteError,
       goPlan: () => this.doPlan(),
       goGenerate: () => this.doGenerate(),
       newVideo: () => {
@@ -332,22 +341,27 @@ class LiveMain extends Component {
       jobId: job?.id ? `#${job.id}` : v.jobId,
       pct, pctNum: pct, pctW: `${pct}%`, stageLabel: STAGE_LABEL[job?.stage ?? "checking"],
       stages, genScenes, doneScenes,
+      videoUrl, downloadUrl: videoUrl ? `${videoUrl}?download=1` : undefined,
       projectTitle: title(s.idea),
       rateUp: rate(true), rateDown: rate(false),
     };
   }
 }
 
-function DemoBanner() {
+function DemoBanner({ engine }: { engine: string }) {
+  const text = engine === "worker"
+    ? "Test mode: videos are made by open-source AI models on a test GPU. Text to Video only; no audio yet, uploads aren't stored, and safety checks are off."
+    : "Demo mode: videos are simulated (no real AI video yet), uploads aren't stored, and safety checks are off.";
   return (
     <div role="note" style={{ background: "#19191F", borderBottom: "1px solid #FBBF24", color: "#FBBF24", fontSize: 13, fontWeight: 600, padding: "8px 16px", textAlign: "center" }}>
-      Demo mode: videos are simulated (no real AI video yet), uploads aren&apos;t stored, and safety checks are off.
+      {text}
     </div>
   );
 }
 
 export default function MainLiveScreen(props: { plan?: string; region?: string }) {
   const [notice, setNotice] = useState("");
+  const [engine, setEngine] = useState("simulated");
   const show = (msg: string) => {
     setNotice(msg);
     setTimeout(() => setNotice((cur) => (cur === msg ? "" : cur)), 7000);
@@ -355,8 +369,8 @@ export default function MainLiveScreen(props: { plan?: string; region?: string }
   return (
     <>
       <style>{STYLES}</style>
-      <DemoBanner />
-      <LiveMain {...props} onNotice={show} />
+      <DemoBanner engine={engine} />
+      <LiveMain {...props} onNotice={show} onEngine={setEngine} />
       {notice && (
         <div role="alert" style={{ position: "fixed", bottom: 20, left: "50%", transform: "translateX(-50%)", maxWidth: "min(560px, calc(100vw - 32px))", background: "#222129", border: "1px solid #FBBF24", color: "#F5F4F7", borderRadius: 12, padding: "12px 16px", fontSize: 14, zIndex: 100, boxShadow: "0 8px 24px rgba(0,0,0,.4)" }}>
           {notice}

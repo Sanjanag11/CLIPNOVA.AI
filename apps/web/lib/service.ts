@@ -1,13 +1,19 @@
 import {
-  DEFAULT_PLANS, DEFAULT_PRICING, FakeAdapter, InMemoryGenerationStore, InMemoryLedger, ModelRegistry, applyEvent, isRegionExcluded,
-  newJob, type AspectRatio, type CapabilityProfile, type JobView, type Mode, type Plan, type WorkflowDeps,
+  DEFAULT_PLANS, DEFAULT_PRICING, FakeAdapter, HttpVideoAdapter, InMemoryGenerationStore, InMemoryLedger, ModelRegistry, applyEvent,
+  isRegionExcluded, newJob, type AspectRatio, type CapabilityProfile, type Composer, type JobView, type Mode, type Plan, type WorkflowDeps,
 } from "@clipnova/core";
+import { LIVE_MODES, UI_MODEL_IDS, WORKER_CATALOG } from "./catalog";
+import { FfmpegComposer } from "./composer";
+import { LocalVideoStore } from "./video-store";
 
 /**
- * DEMO SERVICE (in-memory, single process). Every model is a FakeAdapter: it simulates rendering time and
- * returns a placeholder URI, so NO real video is produced. Rates and modes mirror the approved prototype;
- * licence fields follow the Phase 0 assessment and need legal review before real use.
- * Real adapters, a database ledger and a durable job queue replace this in later milestones.
+ * DEMO SERVICE (in-memory, single process; no database yet).
+ *
+ * Two engines:
+ *  - "simulated" (default): every model is a FakeAdapter that waits a moment and returns a placeholder; NO real video.
+ *  - "worker": set CLIPNOVA_WORKER_URL (+ CLIPNOVA_WORKER_TOKEN) to render with open-source models on an inference
+ *    worker (workers/inference). Scenes are stitched by ffmpeg into a real MP4.
+ * Rates and modes mirror the approved prototype; licence fields follow the Phase 0 assessment and need legal review.
  */
 type Row = { id: string; name: string; modes: Mode[]; rate: number; excluded?: string[]; licence: string };
 const MODELS: Row[] = [
@@ -29,33 +35,69 @@ const profile = (r: Row): CapabilityProfile => ({
   licence: { id: r.licence, commercialUse: true, excludedTerritories: r.excluded },
 });
 
+export type Engine = "simulated" | "worker";
+
 export interface Service {
+  engine: Engine;
   deps: WorkflowDeps;
   registry: ModelRegistry;
   jobs: Map<string, JobView>;
   ratings: Map<string, "up" | "down">;
   seq: number;
+  workerUrl?: string;
+  workerToken?: string;
+  discoveredAt: number;
 }
 
 const g = globalThis as unknown as { __clipnova?: Service };
 
+function buildRegistry(engine: Engine, workerUrl: string | undefined, workerToken: string | undefined, store: LocalVideoStore | undefined): ModelRegistry {
+  const registry = new ModelRegistry();
+  if (engine === "worker") {
+    const wanted = (process.env.CLIPNOVA_WORKER_MODELS ?? WORKER_CATALOG.map((m) => m.id).join(",")).split(",").map((x) => x.trim());
+    for (const m of WORKER_CATALOG.filter((c) => wanted.includes(c.id))) {
+      const prof: CapabilityProfile = {
+        id: m.id, name: m.name, family: m.id, modes: LIVE_MODES, maxClipSeconds: m.maxClipSeconds, fps: m.fps, aspectRatios: m.aspects,
+        promptLanguage: "en", creditsPerSecond: m.creditsPerSecond,
+        licence: { id: m.licenceId, commercialUse: true, notes: m.licenceNote },
+      };
+      registry.register(new HttpVideoAdapter(prof, {
+        baseUrl: workerUrl!, token: workerToken, workerModelId: m.workerId, store: store!,
+        timeoutMs: Number(process.env.CLIPNOVA_SCENE_TIMEOUT_MS ?? 20 * 60_000),
+        pollMs: Number(process.env.CLIPNOVA_POLL_MS ?? 1500),
+      }));
+    }
+    registry.autoOrder = { t2v: ["wan", "ltx", "cog"] };
+  } else {
+    const delayMs = Number(process.env.CLIPNOVA_DEMO_RENDER_MS ?? 1600);
+    for (const r of MODELS) registry.register(new FakeAdapter(profile(r), { delayMs }));
+    // Prototype's Auto recommendations: text/image -> Wan 2.2, video -> VACE.
+    registry.autoOrder = { t2v: ["wan"], i2v: ["wan"], v2v: ["vace"] };
+  }
+  return registry;
+}
+
 export function getService(): Service {
   if (g.__clipnova) return g.__clipnova;
-  const delayMs = Number(process.env.CLIPNOVA_DEMO_RENDER_MS ?? 1600);
-  const registry = new ModelRegistry();
-  for (const r of MODELS) registry.register(new FakeAdapter(profile(r), { delayMs }));
-  // Prototype's Auto recommendations: text/image -> Wan 2.2, video -> VACE.
-  registry.autoOrder = { t2v: ["wan"], i2v: ["wan"], v2v: ["vace"] };
+  const workerUrl = process.env.CLIPNOVA_WORKER_URL?.trim() || undefined;
+  const engine: Engine = workerUrl ? "worker" : "simulated";
+  const workerToken = process.env.CLIPNOVA_WORKER_TOKEN || undefined;
+  const videoStore = engine === "worker" ? new LocalVideoStore() : undefined;
+  const registry = buildRegistry(engine, workerUrl, workerToken, videoStore);
   const store = new InMemoryGenerationStore();
+  const composer: Composer = engine === "worker"
+    ? new FfmpegComposer()
+    : { compose: async (id) => `demo://${id}/final-${++svc.seq}.mp4` };
   const svc: Service = {
+    engine, workerUrl, workerToken, discoveredAt: 0,
     seq: 0, registry, jobs: new Map(), ratings: new Map(),
     deps: {
       ledger: new InMemoryLedger(),
       registry, store,
       pricing: DEFAULT_PRICING,
-      // NOT ENABLED in the demo: real moderation providers arrive in M1.3.
+      // NOT ENABLED yet: real moderation providers arrive in M1.3.
       moderator: { checkText: async () => [] },
-      composer: { compose: async (id) => `demo://${id}/final-${++svc.seq}.mp4` },
+      composer,
       newId: () => `gen_${++svc.seq}`,
       emit: (e) => {
         let job = svc.jobs.get(e.generationId);
@@ -71,6 +113,34 @@ export function getService(): Service {
   };
   g.__clipnova = svc;
   return svc;
+}
+
+/**
+ * Asks the worker which models it really serves and turns off the ones it doesn't, so the app never
+ * assumes a capability the worker lacks. Cached for a minute; if the worker is unreachable nothing changes
+ * (jobs then fail and are refunded).
+ */
+export async function refreshWorker(svc: Service = getService()): Promise<void> {
+  if (svc.engine !== "worker" || Date.now() - svc.discoveredAt < 60_000) return;
+  svc.discoveredAt = Date.now();
+  try {
+    const res = await fetch(`${svc.workerUrl!.replace(/\/+$/, "")}/v1/models`, {
+      headers: svc.workerToken ? { authorization: `Bearer ${svc.workerToken}` } : {}, signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return;
+    const served = new Set(((await res.json()) as { models: { id: string }[] }).models.map((m) => m.id));
+    for (const m of WORKER_CATALOG) if (svc.registry.get(m.id)) svc.registry.setEnabled(m.id, served.has(m.workerId));
+  } catch {
+    svc.discoveredAt = 0; // try again on the next request
+  }
+}
+
+/**
+ * Voiceover, music and sound effects are only simulated today. The live engine produces no audio, so it must
+ * not charge for it: add-ons are switched off there until audio generation exists.
+ */
+export function effectiveAddons(svc: Service, requested: { voice: boolean; music: boolean; sfx: boolean }) {
+  return svc.engine === "worker" ? { voice: false, music: false, sfx: false } : requested;
 }
 
 /** The demo has no sign-in yet, so the caller picks a demo plan. Disabled in production unless explicitly enabled. */
@@ -95,6 +165,7 @@ export async function identify(req: Request, planId: string | undefined, regionO
   if (!/^[A-Z]{2}$/.test(region)) throw new ApiError(400, "Region must be a 2-letter country code.", "BAD_REGION");
   const userId = `demo-${plan.id}`;
   const svc = getService();
+  await refreshWorker(svc);
   // Each demo plan's user receives the plan's monthly credits once.
   await svc.deps.ledger.grant(userId, plan.monthlyCredits, `grant:${userId}`);
   let h = 0;
@@ -105,14 +176,17 @@ export async function identify(req: Request, planId: string | undefined, regionO
 export interface ModelAvailability { id: string; name: string; rate: number; modes: Mode[]; available: boolean; reason?: string }
 
 export function modelAvailability(mode: Mode, aspect: AspectRatio, region: string): ModelAvailability[] {
-  return getService().registry.list().map(({ adapter, enabled }) => {
-    const p = adapter.profile;
+  const rows = new Map(getService().registry.list().map((r) => [r.adapter.profile.id, r]));
+  return UI_MODEL_IDS.map((u) => {
+    const row = rows.get(u.id);
+    if (!row) return { id: u.id, name: u.name, rate: u.rate, modes: u.modes, available: false, reason: "Coming soon" };
+    const p = row.adapter.profile;
     let reason: string | undefined;
-    if (!enabled) reason = "Temporarily unavailable";
-    else if (!p.modes.includes(mode)) reason = "Not available for this mode";
+    if (!row.enabled) reason = "Temporarily unavailable";
+    else if (!p.modes.includes(mode)) reason = mode === "t2v" ? "Not available for this mode" : "Not available yet for this mode";
     else if (!p.aspectRatios.includes(aspect)) reason = "Doesn't support this shape";
     else if (isRegionExcluded(region, p.licence.excludedTerritories ?? [])) reason = "Not available in your region";
-    return { id: p.id, name: p.name, rate: p.creditsPerSecond, modes: [...p.modes], available: !reason, reason };
+    return { id: p.id, name: p.name, rate: p.creditsPerSecond, modes: u.modes, available: !reason, reason };
   });
 }
 

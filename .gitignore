@@ -9,3 +9,8 @@ coverage/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+.data/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/

@@ -69,6 +69,7 @@ describe("plans, models and quotes", () => {
   it("quotes the prototype price: 8s on Wan 2.2 with voice, music and sfx = 53", async () => {
     const q = await (await quote.POST(post("/api/quote", { plan: "pro", ...base }))).json();
     expect(q.quote.total).toBe(53);
+    expect(q.audioAvailable).toBe(true); // the simulated engine prices audio, as in the prototype
     expect(q.modelUsed).toBe("Wan 2.2");
     expect(q.canAfford).toBe(true);
   });

@@ -1,0 +1,20 @@
+[project]
+name = "clipnova-worker"
+version = "0.1.0"
+description = "ClipNova inference worker: serves open-source video models over HTTP"
+requires-python = ">=3.10"
+dependencies = ["fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2.6"]
+
+[project.optional-dependencies]
+# Only needed on the GPU machine. Tests and the WORKER_FAKE=1 dev mode do not need them.
+gpu = [
+  "torch", "diffusers>=0.35", "transformers>=4.50", "accelerate", "sentencepiece", "ftfy",
+  "imageio", "imageio-ffmpeg", "protobuf",
+]
+dev = ["pytest", "httpx"]
+
+[tool.setuptools]
+packages = ["clipnova_worker", "clipnova_worker.pipelines"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

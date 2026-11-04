@@ -1,5 +1,5 @@
 import { CreativePlanSchema, runGeneration } from "@clipnova/core";
-import { ApiError, getService, identify, jsonError } from "@/lib/service";
+import { ApiError, effectiveAddons, getService, identify, jsonError } from "@/lib/service";
 import { GenerateBody } from "@/lib/schemas";
 
 export async function POST(req: Request) {
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     // (A durable queue replaces this in-process background run in production.)
     const run = runGeneration(svc.deps, {
       userId: c.userId, plan: c.plan, idempotencyKey: key, mode: b.mode, durationSeconds: b.durationSeconds,
-      aspectRatio: b.aspectRatio, region: c.region, modelId: b.modelId, addons: b.addons,
+      aspectRatio: b.aspectRatio, region: c.region, modelId: b.modelId, addons: effectiveAddons(svc, b.addons),
       creativePlan: plan.data, rolloutBucket: c.bucket,
     });
     run.catch((e) => console.error("generation failed", e));

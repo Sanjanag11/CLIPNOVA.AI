@@ -37,8 +37,14 @@ Repo layout:
   - `app/_screens/*.tsx` are GENERATED from the prototype (never hand-edit).
   - `app/_live/MainLive.tsx` extends the generated Create screen and replaces its simulated data with the real API.
   - `app/api/*` route handlers: me, models, quote, plan, generations (+ `[id]`, scene regenerate, rating).
-  - `lib/service.ts` DEMO service: in-memory ledger/store and FakeAdapter models with a simulated render delay.
+  - `lib/service.ts` DEMO service: in-memory ledger/store. Engine "simulated" (FakeAdapter, default) or "worker"
+    (set `CLIPNOVA_WORKER_URL` + `CLIPNOVA_WORKER_TOKEN`): HttpVideoAdapter -> worker, scenes stitched by `lib/composer.ts` (ffmpeg).
+  - `lib/catalog.ts` business metadata per live model (price, licence, shapes); `lib/video-store.ts` local disk (R2 later).
   - `test/api.test.ts` integration tests that call the route handlers directly.
+- `workers/inference` Python worker that serves open-source video models (Wan 2.2 5B, LTX-Video, CogVideoX-2B) over HTTP.
+  Pure logic and the HTTP protocol are tested (44 pytest, real ffmpeg); the three diffusers pipelines are NOT yet run on a GPU.
+  `WORKER_FAKE=1` renders ffmpeg test patterns so the whole stack runs without a GPU. Deployment: `modal_app.py` (untested), `docs/free-gpu.md`.
+- `docs/open-source-stack.md` open-source choice per purpose, with licence status (verified vs unverified).
 - `design/prototype` Source of truth for the UI: the six `.dc.html` screens exported from the design canvas.
 - `tools/dc2react.mjs` Converts `design/prototype/*.dc.html` into React screens. To change the UI: edit the prototype
   file (or re-export it from the canvas), run `node tools/dc2react.mjs`, never hand-edit `_screens/`.
@@ -61,6 +67,8 @@ Repo layout:
 - `npm install`
 - `npm test`          run all package tests (core + web: vitest)
 - `npm run dev -w @clipnova/web`   run the web app on :3000
+- Live models: `CLIPNOVA_WORKER_URL`, `CLIPNOVA_WORKER_TOKEN`, `CLIPNOVA_WORKER_MODELS` (default wan,ltx,cog), `CLIPNOVA_DATA_DIR`,
+  `CLIPNOVA_POLL_MS`, `CLIPNOVA_SCENE_TIMEOUT_MS`. Worker: see `workers/inference/README.md`.
 - Demo mode: `next start` runs in production mode, where the demo identity is OFF (API returns 501 AUTH_NOT_CONFIGURED).
   Set `CLIPNOVA_DEMO=1` to enable it; `CLIPNOVA_DEMO_RENDER_MS` sets the simulated render time per scene (default 1600).
   Try plans and licence territories with `/create?plan=free|creator|pro&region=DE`. NEVER set CLIPNOVA_DEMO in a real deployment.
@@ -69,14 +77,16 @@ Repo layout:
 
 ## Status
 Milestone 1.1 in progress.
-Done and tested: core domain + workflow (71 vitest tests); web API layer (17 tests); all six prototype screens in Next.js.
-The Create screen is wired to the real backend: live cost quote and balance from the ledger, planning via the API,
-asynchronous generation with real progress, scene edits sent to the job, per-scene regeneration (charges only that scene),
-full regenerate, ratings, region-aware model availability. Browser-verified end to end (Playwright, manual scripts; not yet in the repo).
-Honest limits (all shown by the in-app "Demo mode" banner or labelled in the UI):
-- Models are fake adapters: no real video is produced. The player is a placeholder; "Download MP4" does nothing.
-- The planner is basic and deterministic (splits the idea into scenes). The Claude planner is not built.
-- Uploads (image/video modes) are simulated and not stored. No audio is generated (voiceover/music/sfx are priced but not produced).
-- Moderation is not enabled. "Saved to Library" is prototype copy: Library, Model Lab and Admin still show the prototype's sample data.
+Done and tested: core domain + workflow + worker adapter (91 vitest); web API, ffmpeg composer, video route and a full live-path
+test against a stand-in worker returning real video (32 vitest); Python worker (44 pytest). All six prototype screens run in Next.js.
+Verified end to end with the REAL Python worker in fake-render mode + the real web app + a real browser: plan, generate (3 worker jobs),
+stitched 8 s 720x1280 H.264 video, working player, download link, per-scene regenerate, refunds, region rules.
+NOT yet verified: the three real diffusers pipelines on a GPU (no GPU or Hugging Face access in the build environment).
+Honest limits:
+- Real models: text-to-video only. Image/video modes need stored uploads (not built), so they show "Not available yet".
+- No audio is produced; the live engine therefore does not charge for voiceover/music/sfx (tested). Prototype copy such as
+  "Hindi voiceover" and "saved to Library" is still shown on the result screen.
+- The planner is basic and deterministic; prompts are not translated to English yet (IndicTrans2 hook exists, unconnected).
+- Moderation is OFF. Library, Model Lab and Admin show the prototype's sample data.
 - State is in memory (lost on restart); no sign-in (demo user per plan), no database, no payments, no durable job queue.
-Next: sign-in + Postgres ledger/jobs, real Wan 2.2 adapter on a GPU provider, Claude planner, ffmpeg composer, moderation.
+Next: run the worker on a real GPU and benchmark; then sign-in + Postgres; Claude/open-LLM planner; audio; moderation.
