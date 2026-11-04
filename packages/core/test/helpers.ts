@@ -1,7 +1,7 @@
 import { FakeAdapter, fakeProfile, type FakeBehavior } from "../src/adapters/fake.js";
 import { InMemoryLedger } from "../src/ledger.js";
 import { ModelRegistry } from "../src/models.js";
-import { DEFAULT_PLANS, DEFAULT_PRICING } from "../src/plans.js";
+import { DEFAULT_PLANS, DEFAULT_PRICING, quoteCredits } from "../src/plans.js";
 import { InMemoryGenerationStore, type GenerationRequest, type WorkflowDeps, type WorkflowEvent } from "../src/workflow.js";
 import { splitDuration } from "../src/scenes.js";
 import type { CreativePlan, Duration } from "../src/plan.js";
@@ -42,9 +42,14 @@ export function setup(opts: { behavior?: FakeBehavior; extraAdapters?: FakeAdapt
     const duration = over.duration ?? 8;
     return {
       userId: "u1", plan: DEFAULT_PLANS[1]!, idempotencyKey: `k${++n}`, mode: "t2v",
-      durationSeconds: duration, aspectRatio: "9:16", tier: "standard",
+      durationSeconds: duration, aspectRatio: "9:16", region: "IN",
+      addons: { voice: false, music: false, sfx: false },
       creativePlan: makePlan(duration), ...over,
     };
   };
   return { adapter, registry, ledger, deps, events, req, composeCalls };
 }
+
+/** Expected credits for the default fake model (4 credits/second) with no add-ons. */
+export const expectedBase = (duration: number) =>
+  quoteCredits(DEFAULT_PRICING, "Fake Standard", 4, duration, { voice: false, music: false, sfx: false }).total;

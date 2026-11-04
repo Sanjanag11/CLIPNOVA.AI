@@ -1,8 +1,10 @@
+import { isRegionExcluded } from "./regions.js";
 import type { AspectRatio, CreativePlan, Mode, ScenePlan } from "./plan.js";
 
 /** What a model can do. Validated by contract tests, never assumed. */
 export interface CapabilityProfile {
   id: string;
+  name: string;
   family: string;
   modes: readonly Mode[];
   maxClipSeconds: number;
@@ -10,8 +12,15 @@ export interface CapabilityProfile {
   aspectRatios: readonly AspectRatio[];
   /** Language the model expects its prompt in. */
   promptLanguage: "en";
-  tier: string;
-  licence: { id: string; commercialUse: boolean; notes?: string };
+  /** What users are charged per second of video from this model. */
+  creditsPerSecond: number;
+  licence: {
+    id: string;
+    commercialUse: boolean;
+    /** ISO country codes or groups (e.g. "EU") where the licence does not grant rights. */
+    excludedTerritories?: readonly string[];
+    notes?: string;
+  };
   /** Vendor-stated or estimated until measured in Phase 2. */
   estCostUsdPerSecond?: number;
 }
@@ -62,8 +71,23 @@ export interface ModelVersionRow {
   rolloutPct: number;
 }
 
+export interface SelectionQuery {
+  mode: Mode;
+  aspectRatio: AspectRatio;
+  /** ISO country code of the user; licence territory exclusions are enforced against it. */
+  region: string;
+  /** 0-99, stable per user; drives gradual rollouts. */
+  bucket?: number;
+  /** A specific model the user chose; omit or "auto" for automatic selection. */
+  modelId?: string;
+  /** Longest scene in the request; models with a shorter max clip are skipped. */
+  maxSceneSeconds?: number;
+}
+
 export class ModelRegistry {
   private rows = new Map<string, ModelVersionRow>();
+  /** Preferred model order for "Auto", per mode (the prototype's recommendations). */
+  autoOrder: Partial<Record<Mode, string[]>> = {};
 
   register(adapter: VideoModelAdapter, opts: { enabled?: boolean; rolloutPct?: number } = {}): void {
     this.rows.set(adapter.profile.id, { adapter, enabled: opts.enabled ?? true, rolloutPct: opts.rolloutPct ?? 100 });
@@ -81,16 +105,26 @@ export class ModelRegistry {
   }
 
   /**
-   * Rule-based selection: enabled, commercially licensed, supports the mode and
-   * aspect ratio, matches tier; cheapest first. `bucket` (0-99) makes rollout
-   * percentages deterministic per user.
+   * Eligible models in routing order. Eligible = enabled, in rollout bucket, commercially licensed,
+   * licence valid in the user's region, supports mode/aspect ratio/scene length. A user-chosen model
+   * is returned alone (never silently swapped); "Auto" returns the preferred order, then cheapest.
    */
-  candidates(mode: Mode, aspect: AspectRatio, tier: string, bucket = 0): VideoModelAdapter[] {
-    return this.list()
-      .filter((r) => r.enabled && bucket < r.rolloutPct)
+  select(q: SelectionQuery): VideoModelAdapter[] {
+    const eligible = this.list()
+      .filter((r) => r.enabled && (q.bucket ?? 0) < r.rolloutPct)
       .map((r) => r.adapter)
-      .filter((a) => a.profile.licence.commercialUse && a.profile.modes.includes(mode)
-        && a.profile.aspectRatios.includes(aspect) && a.profile.tier === tier)
-      .sort((a, b) => (a.profile.estCostUsdPerSecond ?? Infinity) - (b.profile.estCostUsdPerSecond ?? Infinity));
+      .filter((a) => {
+        const p = a.profile;
+        return p.licence.commercialUse
+          && !isRegionExcluded(q.region, p.licence.excludedTerritories ?? [])
+          && p.modes.includes(q.mode)
+          && p.aspectRatios.includes(q.aspectRatio)
+          && (q.maxSceneSeconds === undefined || q.maxSceneSeconds <= p.maxClipSeconds);
+      });
+    if (q.modelId && q.modelId !== "auto") return eligible.filter((a) => a.profile.id === q.modelId);
+    const pref = this.autoOrder[q.mode] ?? [];
+    const rank = (a: VideoModelAdapter) => { const i = pref.indexOf(a.profile.id); return i === -1 ? Infinity : i; };
+    return eligible.sort((a, b) => rank(a) - rank(b)
+      || (a.profile.creditsPerSecond - b.profile.creditsPerSecond));
   }
 }

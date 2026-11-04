@@ -1,6 +1,6 @@
 # ClipNova.ai
 
-AI video creation SaaS for Gen Z creators, influencers and small businesses (India first).
+AI video creation SaaS for Gen Z creators, influencers and small businesses. Launch markets: India and global (undecided priority).
 Turn text, images and videos into publishable short-form video (Reels, Shorts, TikTok).
 Three experiences: Text to Video (t2v), Image to Video (i2v), Video to Video (v2v).
 
@@ -8,11 +8,22 @@ Full Phase 0 assessment (architecture, model matrix, licences, backlog, risks):
 https://claude.ai/artifact/GZRLgQ45GDHa5EfuAExLnQ
 
 ## Product constraints
-- Durations: 4, 6, 8, 12 s; 30 s is premium only. Aspect ratios 9:16, 1:1, 16:9.
+- Durations: 4, 6, 8, 12 s; 30 s needs a paid plan (Creator/Pro). Aspect ratios 9:16, 16:9, 1:1, 4:5.
+- Plans (from the approved prototype): Free 120 credits (<=12 s, 720p, watermark), Creator 900, Pro 2500. Prices are still [PRICE] placeholders.
+- Credits per video = model rate x seconds (Wan 6, LTX 3, Hunyuan 7, Cog 4, VACE 6, SVD 3, LongCat 7, Mochi 5, Open-Sora 4 in the prototype; unverified placeholders until Phase 2) + voiceover 1 per 4 s + music 2 + sound effects 1; captions free.
+- "Auto" model picks by mode (prototype: text/image -> Wan 2.2, video -> VACE). A model the user picks is never silently swapped.
+- Global market: model licences can exclude territories. HunyuanVideo 1.5 excludes the EU, UK and South Korea, so it is never routed for users there (`licence.excludedTerritories`, enforced in `ModelRegistry.select`).
 - Launch languages: en, hi, mr, kn, gu, bn. Languages are data; adding one must not need workflow changes.
 - Users describe ideas in their own language; video prompts are always rendered in English; narration/captions stay in the user's language.
 - Credits are reserved at submit, captured per successful scene, released for failures. Users never pay for failed output.
 - Plans, pricing and credit costs are data (`plans.ts` now, DB rows + admin UI later), never hard-coded in the workflow.
+
+## Design source
+The approved UI prototype is the design canvas https://claude.ai/artifact/FimG8xtmbsNWZSRTzq48as
+(screens: Landing, Create, Library, Plans & credits, Model Lab, Admin). Dark theme: bg #101014, surface #19191F,
+card #222129, hover #2B2933, primary #A78BFA / hover #C4B5FD, text #F5F4F7, secondary text #A5A2AF, border #34323D,
+success #34D399, warning #FBBF24, error #F87171. Font Inter. Radii 8 controls / 12-16 cards / 16-20 panels.
+Prototype admin figures are illustrative sample data only; do not present them as real metrics.
 
 ## Architecture (see assessment section 4)
 Four layers: product (Next.js web + API) -> durable generation workflow -> execution (GPU model workers,
@@ -43,5 +54,5 @@ Repo layout:
 - `npm run typecheck` typecheck all packages
 
 ## Status
-Milestone 1.1 in progress: core domain + workflow done and tested with a fake adapter.
+Milestone 1.1 in progress: core domain + workflow done and tested (49 tests) with a fake adapter; aligned to the prototype pricing/plans and region-aware licences.
 Not built yet: web app, API, auth, DB, storage, real GPU adapter (Wan 2.2 TI2V-5B), LLM planner, ffmpeg composer.

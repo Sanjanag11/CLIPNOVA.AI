@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { FakeAdapter, fakeProfile } from "../src/adapters/fake.js";
-import { DEFAULT_PLANS, quoteCredits, DEFAULT_PRICING, checkPlanAllows } from "../src/plans.js";
+import { DEFAULT_PLANS, checkPlanAllows } from "../src/plans.js";
 import { runGeneration } from "../src/workflow.js";
-import { makePlan, setup } from "./helpers.js";
+import { expectedBase, makePlan, setup } from "./helpers.js";
 
 describe("runGeneration", () => {
   it("happy path: 8s video becomes 2 scenes, is composed, and charges the full quote", async () => {
@@ -13,7 +13,7 @@ describe("runGeneration", () => {
     expect(g.scenes).toHaveLength(2);
     expect(g.outputUri).toBe(`fake://${g.id}/final.mp4`);
     expect(t.composeCalls).toEqual([2]);
-    const quote = quoteCredits(DEFAULT_PRICING, "t2v", "standard", 8);
+    const quote = expectedBase(8);
     expect(g.creditsQuoted).toBe(quote);
     expect(g.creditsCharged).toBe(quote);
     expect(await t.ledger.balance("u1")).toEqual({ available: 100 - quote, held: 0, spent: quote });
@@ -39,7 +39,7 @@ describe("runGeneration", () => {
     expect(a.id).toBe(b.id);
     expect(c.id).toBe(a.id);
     expect(t.adapter.calls).toHaveLength(1);
-    const quote = quoteCredits(DEFAULT_PRICING, "t2v", "standard", 4);
+    const quote = expectedBase(4);
     expect((await t.ledger.balance("u1")).spent).toBe(quote);
   });
 
@@ -119,16 +119,17 @@ describe("runGeneration", () => {
     expect(await t.ledger.balance("u1")).toEqual({ available: 100, held: 0, spent: 0 });
   });
 
-  it("free plan cannot request 30s or v2v; premium can request 30s", async () => {
+  it("free plan cannot request 30s; paid plans can", async () => {
     expect(checkPlanAllows(DEFAULT_PLANS[0]!, "t2v", 30)).not.toEqual([]);
-    expect(checkPlanAllows(DEFAULT_PLANS[0]!, "v2v", 4)).not.toEqual([]);
+    expect(checkPlanAllows(DEFAULT_PLANS[0]!, "t2v", 12)).toEqual([]);
+    expect(checkPlanAllows(DEFAULT_PLANS[1]!, "t2v", 30)).toEqual([]);
     expect(checkPlanAllows(DEFAULT_PLANS[2]!, "t2v", 30)).toEqual([]);
 
     const t = setup();
     await t.ledger.grant("u1", 500, "grant");
     const denied = await runGeneration(t.deps, t.req({ plan: DEFAULT_PLANS[0]!, duration: 30, creativePlan: makePlan(30) }));
     expect(denied.status).toBe("rejected");
-    const ok = await runGeneration(t.deps, t.req({ plan: DEFAULT_PLANS[2]!, duration: 30, creativePlan: makePlan(30) }));
+    const ok = await runGeneration(t.deps, t.req({ plan: DEFAULT_PLANS[1]!, duration: 30, creativePlan: makePlan(30) }));
     expect(ok.status).toBe("succeeded");
     expect(ok.scenes).toHaveLength(6);
   });

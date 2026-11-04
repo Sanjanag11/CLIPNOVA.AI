@@ -58,13 +58,14 @@ export class FakeAdapter implements VideoModelAdapter {
 
 export const fakeProfile = (over: Partial<CapabilityProfile> = {}): CapabilityProfile => ({
   id: "fake-standard",
+  name: "Fake Standard",
   family: "fake",
   modes: ["t2v", "i2v", "v2v"],
   maxClipSeconds: 5,
   fps: 24,
   aspectRatios: ["9:16", "1:1", "16:9"],
   promptLanguage: "en",
-  tier: "standard",
+  creditsPerSecond: 4,
   licence: { id: "test", commercialUse: true },
   estCostUsdPerSecond: 0.02,
   ...over,

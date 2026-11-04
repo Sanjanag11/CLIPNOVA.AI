@@ -1,7 +1,7 @@
 import type { Ledger } from "./ledger.js";
 import { InsufficientCreditsError } from "./ledger.js";
 import { ModelError, type ModelRegistry, type SceneResult, type VideoModelAdapter } from "./models.js";
-import { checkPlanAllows, quoteCredits, type Plan, type PricingRule } from "./plans.js";
+import { checkPlanAllows, quoteCredits, type Addons, type Plan, type PricingConfig, type Quote } from "./plans.js";
 import { validatePlanIntegrity, type AspectRatio, type CreativePlan, type Mode } from "./plan.js";
 import { allocateCredits } from "./scenes.js";
 
@@ -14,7 +14,11 @@ export interface GenerationRequest {
   mode: Mode;
   durationSeconds: number;
   aspectRatio: AspectRatio;
-  tier: string;
+  /** ISO country code of the user. Model licence territories are enforced against it. */
+  region: string;
+  /** A model the user picked; omit or "auto" to let ClipNova choose. */
+  modelId?: string;
+  addons: Addons;
   creativePlan: CreativePlan;
   inputAssetIds?: string[];
   /** 0-99, stable per user; drives gradual model rollouts. */
@@ -37,6 +41,7 @@ export interface Generation {
   idempotencyKey: string;
   status: GenerationStatus;
   creditsQuoted: number;
+  quote?: Quote;
   creditsCharged: number;
   creditsRefunded: number;
   scenes: SceneOutcome[];
@@ -81,7 +86,7 @@ export interface WorkflowDeps {
   store: GenerationStore;
   moderator: Moderator;
   composer: Composer;
-  pricing: readonly PricingRule[];
+  pricing: PricingConfig;
   newId: () => string;
   emit?: (e: WorkflowEvent) => void;
   /** Attempts per model before falling back to the next candidate. */
@@ -130,12 +135,17 @@ export async function runGeneration(deps: WorkflowDeps, req: GenerationRequest):
   if (blocked.length) return reject(blocked, "MODERATION_BLOCKED");
 
   // 4. Model selection.
-  const candidates = deps.registry.candidates(req.mode, req.aspectRatio, req.tier, req.rolloutBucket ?? 0);
-  const eligible = candidates.filter((a) => req.creativePlan.scenes.every((s) => s.durationSeconds <= a.profile.maxClipSeconds));
-  if (!eligible.length) return reject(["no eligible model for this request"], "NO_MODEL");
+  const eligible = deps.registry.select({
+    mode: req.mode, aspectRatio: req.aspectRatio, region: req.region, bucket: req.rolloutBucket,
+    modelId: req.modelId, maxSceneSeconds: Math.max(...req.creativePlan.scenes.map((s) => s.durationSeconds)),
+  });
+  if (!eligible.length) return reject(["no eligible model for this request, mode and region"], "NO_MODEL");
 
   // 5. Quote + reserve credits (the only place money is checked).
-  gen.creditsQuoted = quoteCredits(deps.pricing, req.mode, req.tier, req.durationSeconds);
+  // Quoted on the primary model; a pricier fallback is absorbed by ClipNova, never the user.
+  const primary = eligible[0]!.profile;
+  gen.quote = quoteCredits(deps.pricing, primary.name, primary.creditsPerSecond, req.durationSeconds, req.addons);
+  gen.creditsQuoted = gen.quote.total;
   try {
     await deps.ledger.reserve(req.userId, gen.id, gen.creditsQuoted, `reserve:${req.idempotencyKey}`);
   } catch (e) {

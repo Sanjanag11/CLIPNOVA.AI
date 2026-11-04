@@ -16,7 +16,7 @@ export const DURATIONS = [4, 6, 8, 12, 30] as const;
 export const DurationSchema = z.union([z.literal(4), z.literal(6), z.literal(8), z.literal(12), z.literal(30)]);
 export type Duration = z.infer<typeof DurationSchema>;
 
-export const AspectRatioSchema = z.enum(["9:16", "1:1", "16:9"]);
+export const AspectRatioSchema = z.enum(["9:16", "1:1", "16:9", "4:5"]);
 export type AspectRatio = z.infer<typeof AspectRatioSchema>;
 
 export const ModeSchema = z.enum(["t2v", "i2v", "v2v"]);

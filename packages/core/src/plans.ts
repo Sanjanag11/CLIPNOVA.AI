@@ -3,7 +3,7 @@ import type { Duration, Mode } from "./plan.js";
 /**
  * Plans and pricing are DATA. Changing a price, credit grant or limit means
  * changing these rows (later: database rows edited in the admin UI), never the
- * generation workflow.
+ * generation workflow. Values mirror the approved prototype (Plans & credits screen).
  */
 export interface Plan {
   id: string;
@@ -13,46 +13,45 @@ export interface Plan {
   maxConcurrentGenerations: number;
   allowedModes: readonly Mode[];
   watermark: boolean;
+  maxResolution: "720p" | "1080p";
 }
 
 export const DEFAULT_PLANS: readonly Plan[] = [
-  { id: "free", name: "Free", monthlyCredits: 30, allowedDurations: [4, 6, 8], maxConcurrentGenerations: 1, allowedModes: ["t2v", "i2v"], watermark: true },
-  { id: "creator", name: "Creator", monthlyCredits: 400, allowedDurations: [4, 6, 8, 12], maxConcurrentGenerations: 3, allowedModes: ["t2v", "i2v", "v2v"], watermark: false },
-  { id: "premium", name: "Premium", monthlyCredits: 1500, allowedDurations: [4, 6, 8, 12, 30], maxConcurrentGenerations: 5, allowedModes: ["t2v", "i2v", "v2v"], watermark: false },
+  { id: "free", name: "Free", monthlyCredits: 120, allowedDurations: [4, 6, 8, 12], maxConcurrentGenerations: 1, allowedModes: ["t2v", "i2v", "v2v"], watermark: true, maxResolution: "720p" },
+  { id: "creator", name: "Creator", monthlyCredits: 900, allowedDurations: [4, 6, 8, 12, 30], maxConcurrentGenerations: 3, allowedModes: ["t2v", "i2v", "v2v"], watermark: false, maxResolution: "1080p" },
+  { id: "pro", name: "Pro", monthlyCredits: 2500, allowedDurations: [4, 6, 8, 12, 30], maxConcurrentGenerations: 5, allowedModes: ["t2v", "i2v", "v2v"], watermark: false, maxResolution: "1080p" },
 ];
 
-export interface PricingRule {
-  mode: Mode;
-  /** Quality tier of the chosen model, e.g. "standard" or "pro". */
-  tier: string;
-  creditsPerSecond: number;
-  /** Fixed credits added once per generation (planning, composing, audio). */
-  baseCredits: number;
+export interface Addons {
+  voice: boolean;
+  music: boolean;
+  sfx: boolean;
 }
 
-/** Placeholder values: Phase 2 replaces these with measured cost per successful second of video. */
-export const DEFAULT_PRICING: readonly PricingRule[] = [
-  { mode: "t2v", tier: "standard", creditsPerSecond: 1, baseCredits: 1 },
-  { mode: "i2v", tier: "standard", creditsPerSecond: 1, baseCredits: 1 },
-  { mode: "v2v", tier: "standard", creditsPerSecond: 2, baseCredits: 2 },
-  { mode: "t2v", tier: "pro", creditsPerSecond: 2, baseCredits: 1 },
-  { mode: "i2v", tier: "pro", creditsPerSecond: 2, baseCredits: 1 },
-  { mode: "v2v", tier: "pro", creditsPerSecond: 3, baseCredits: 2 },
-];
-
-export class PricingError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "PricingError";
-  }
+export interface PricingConfig {
+  /** One voiceover credit per this many seconds of video (rounded up). */
+  voiceSecondsPerCredit: number;
+  musicCredits: number;
+  sfxCredits: number;
 }
 
+/** Mirrors the prototype: voiceover 1 per 4 s, music 2, sound effects 1, captions free. */
+export const DEFAULT_PRICING: PricingConfig = { voiceSecondsPerCredit: 4, musicCredits: 2, sfxCredits: 1 };
+
+export interface QuoteLine { label: string; credits: number }
+export interface Quote { lines: QuoteLine[]; total: number }
+
+/** Video credits come from the model's own rate (`creditsPerSecond` in its capability profile). */
 export function quoteCredits(
-  rules: readonly PricingRule[], mode: Mode, tier: string, durationSeconds: number,
-): number {
-  const rule = rules.find((r) => r.mode === mode && r.tier === tier);
-  if (!rule) throw new PricingError(`no pricing rule for ${mode}/${tier}`);
-  return rule.baseCredits + Math.ceil(rule.creditsPerSecond * durationSeconds);
+  cfg: PricingConfig, modelName: string, creditsPerSecond: number, durationSeconds: number, addons: Addons,
+): Quote {
+  const lines: QuoteLine[] = [
+    { label: `Video · ${modelName} · ${durationSeconds}s`, credits: Math.ceil(creditsPerSecond * durationSeconds) },
+  ];
+  if (addons.voice) lines.push({ label: "Voiceover", credits: Math.ceil(durationSeconds / cfg.voiceSecondsPerCredit) });
+  if (addons.music) lines.push({ label: "Music", credits: cfg.musicCredits });
+  if (addons.sfx) lines.push({ label: "Sound effects", credits: cfg.sfxCredits });
+  return { lines, total: lines.reduce((a, l) => a + l.credits, 0) };
 }
 
 export function checkPlanAllows(plan: Plan, mode: Mode, duration: number): string[] {
