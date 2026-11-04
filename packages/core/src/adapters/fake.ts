@@ -7,7 +7,11 @@ export interface FakeBehavior {
   alwaysFailScenes?: number[];
   retryable?: boolean;
   unhealthy?: boolean;
+  /** Simulated render time per scene in ms (0 = instant). Demo only. */
+  delayMs?: number;
 }
+
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 /** Deterministic stand-in used by tests and local dev. Real adapters live next to their GPU workers. */
 export class FakeAdapter implements VideoModelAdapter {
@@ -32,7 +36,8 @@ export class FakeAdapter implements VideoModelAdapter {
 
   async generate(req: SceneRequest, onProgress?: (f: number) => void): Promise<SceneResult> {
     this.calls.push(req);
-    onProgress?.(0.5);
+    const steps = this.behavior.delayMs ? 4 : 1;
+    for (let i = 1; i < steps; i++) { await sleep((this.behavior.delayMs ?? 0) / steps); onProgress?.(i / steps); }
     const retryable = this.behavior.retryable ?? true;
     if (this.behavior.alwaysFailScenes?.includes(req.scene.index)) {
       throw new ModelError("scene permanently failed", retryable, "FAKE_ALWAYS_FAIL");
@@ -42,6 +47,7 @@ export class FakeAdapter implements VideoModelAdapter {
       this.failures.set(req.scene.index, used + 1);
       throw new ModelError("transient GPU failure", retryable, "FAKE_TRANSIENT");
     }
+    if (this.behavior.delayMs) await sleep(this.behavior.delayMs / steps);
     onProgress?.(1);
     return {
       outputUri: `fake://${req.generationId}/scene-${req.scene.index}.mp4`,

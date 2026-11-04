@@ -6,3 +6,5 @@ export * from "./regions";
 export * from "./models";
 export * from "./workflow";
 export { FakeAdapter, fakeProfile } from "./adapters/fake";
+export * from "./planner";
+export * from "./jobs";
