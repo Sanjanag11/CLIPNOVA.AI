@@ -51,6 +51,8 @@ Component.prototype.template = function (v) {
   </>);
 };
 
+export { Component, STYLES };
+
 export default function PricingScreen(props) {
   return (<>
     <style>{STYLES}</style>

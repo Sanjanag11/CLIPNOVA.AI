@@ -68,6 +68,8 @@ Component.prototype.template = function (v) {
   </>);
 };
 
+export { Component, STYLES };
+
 export default function LandingScreen(props) {
   return (<>
     <style>{STYLES}</style>

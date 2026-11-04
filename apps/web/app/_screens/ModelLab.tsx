@@ -80,6 +80,8 @@ Component.prototype.template = function (v) {
   </>);
 };
 
+export { Component, STYLES };
+
 export default function ModelLabScreen(props) {
   return (<>
     <style>{STYLES}</style>

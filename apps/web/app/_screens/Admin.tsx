@@ -75,6 +75,8 @@ Component.prototype.template = function (v) {
   </>);
 };
 
+export { Component, STYLES };
+
 export default function AdminScreen(props) {
   return (<>
     <style>{STYLES}</style>

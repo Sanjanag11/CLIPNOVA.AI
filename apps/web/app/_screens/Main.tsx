@@ -291,6 +291,8 @@ Component.prototype.template = function (v) {
   </>);
 };
 
+export { Component, STYLES };
+
 export default function MainScreen(props) {
   return (<>
     <style>{STYLES}</style>

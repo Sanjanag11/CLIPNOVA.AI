@@ -33,9 +33,12 @@ Application hosting never runs models. Generation is always asynchronous.
 Repo layout:
 - `packages/core`  Business logic, no I/O: Creative Plan schema, credit ledger, plans/pricing,
   model contract + registry, generation workflow. In-memory implementations for tests.
-- `apps/web`       Next.js 16 app. `app/_screens/*.tsx` are GENERATED from the prototype (see below).
-  `app/api/quote` and `app/api/generate` run the core workflow against a DEMO set of fake model adapters
-  (`lib/service.ts`); the generated Create screen does not call them yet.
+- `apps/web`       Next.js 16 app.
+  - `app/_screens/*.tsx` are GENERATED from the prototype (never hand-edit).
+  - `app/_live/MainLive.tsx` extends the generated Create screen and replaces its simulated data with the real API.
+  - `app/api/*` route handlers: me, models, quote, plan, generations (+ `[id]`, scene regenerate, rating).
+  - `lib/service.ts` DEMO service: in-memory ledger/store and FakeAdapter models with a simulated render delay.
+  - `test/api.test.ts` integration tests that call the route handlers directly.
 - `design/prototype` Source of truth for the UI: the six `.dc.html` screens exported from the design canvas.
 - `tools/dc2react.mjs` Converts `design/prototype/*.dc.html` into React screens. To change the UI: edit the prototype
   file (or re-export it from the canvas), run `node tools/dc2react.mjs`, never hand-edit `_screens/`.
@@ -56,15 +59,24 @@ Repo layout:
 
 ## Commands
 - `npm install`
-- `npm test`          run all package tests (core: vitest)
+- `npm test`          run all package tests (core + web: vitest)
 - `npm run dev -w @clipnova/web`   run the web app on :3000
+- Demo mode: `next start` runs in production mode, where the demo identity is OFF (API returns 501 AUTH_NOT_CONFIGURED).
+  Set `CLIPNOVA_DEMO=1` to enable it; `CLIPNOVA_DEMO_RENDER_MS` sets the simulated render time per scene (default 1600).
+  Try plans and licence territories with `/create?plan=free|creator|pro&region=DE`. NEVER set CLIPNOVA_DEMO in a real deployment.
 - `node tools/dc2react.mjs`        regenerate screens from design/prototype
 - `npm run typecheck` typecheck all packages
 
 ## Status
 Milestone 1.1 in progress.
-Done and tested: core domain + workflow (49 vitest tests, fake adapters); all six prototype screens running in Next.js
-(browser-checked: no console errors, Create flow compose -> plan -> generate -> done, navigation, pricing toggle).
-The screens still run the prototype's own SIMULATED logic and sample data (e.g. Admin numbers, Library items, the Riya scene plan).
-Not built yet: wiring the Create screen to the real workflow/API, auth, DB, storage, real GPU adapter (Wan 2.2 TI2V-5B),
-LLM planner, ffmpeg composer, moderation providers, payments.
+Done and tested: core domain + workflow (71 vitest tests); web API layer (17 tests); all six prototype screens in Next.js.
+The Create screen is wired to the real backend: live cost quote and balance from the ledger, planning via the API,
+asynchronous generation with real progress, scene edits sent to the job, per-scene regeneration (charges only that scene),
+full regenerate, ratings, region-aware model availability. Browser-verified end to end (Playwright, manual scripts; not yet in the repo).
+Honest limits (all shown by the in-app "Demo mode" banner or labelled in the UI):
+- Models are fake adapters: no real video is produced. The player is a placeholder; "Download MP4" does nothing.
+- The planner is basic and deterministic (splits the idea into scenes). The Claude planner is not built.
+- Uploads (image/video modes) are simulated and not stored. No audio is generated (voiceover/music/sfx are priced but not produced).
+- Moderation is not enabled. "Saved to Library" is prototype copy: Library, Model Lab and Admin still show the prototype's sample data.
+- State is in memory (lost on restart); no sign-in (demo user per plan), no database, no payments, no durable job queue.
+Next: sign-in + Postgres ledger/jobs, real Wan 2.2 adapter on a GPU provider, Claude planner, ffmpeg composer, moderation.

@@ -179,6 +179,8 @@ ${jsx}
   </>);
 };
 
+export { Component, STYLES };
+
 export default function ${name}Screen(props) {
   return (<>
     <style>{STYLES}</style>
