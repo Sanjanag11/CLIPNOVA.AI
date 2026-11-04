@@ -8,3 +8,4 @@ export * from "./workflow";
 export { FakeAdapter, fakeProfile } from "./adapters/fake";
 export * from "./planner";
 export * from "./jobs";
+export { HttpVideoAdapter, buildPrompt, type HttpAdapterOptions, type VideoStore } from "./adapters/http";
