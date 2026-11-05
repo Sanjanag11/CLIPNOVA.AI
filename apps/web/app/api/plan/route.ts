@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     if (!parsed.success) throw new ApiError(400, "Describe your idea and add a creative prompt (each up to 1500 characters).", "BAD_REQUEST");
     const b = parsed.data;
     const c = await identify(req, b.plan, b.region);
-    const models = getService().registry.select({ mode: b.mode, aspectRatio: b.aspectRatio, region: c.region, bucket: c.bucket, modelId: b.modelId, maxSceneSeconds: 5 });
+    const models = (await getService()).registry.select({ mode: b.mode, aspectRatio: b.aspectRatio, region: c.region, bucket: c.bucket, modelId: b.modelId, maxSceneSeconds: 5 });
     const maxClip = Math.min(...models.map((m) => m.profile.maxClipSeconds), 5);
     if (!models.length) throw new ApiError(409, "No model is available for this mode, shape and region.", "NO_MODEL");
     const narration = (LANGUAGES as readonly string[]).includes(b.language) ? (b.language as Language) : "en";

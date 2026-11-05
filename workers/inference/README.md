@@ -19,7 +19,7 @@ Or, on any machine with a GPU: `pip install -e ".[gpu]" && python -m clipnova_wo
 ## Run without a GPU (development and tests)
 ```bash
 python -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/python -m pytest                      # 47 tests, real ffmpeg
+.venv/bin/python -m pytest                      # 75 tests, real ffmpeg
 WORKER_FAKE=1 WORKER_TOKEN=dev-token .venv/bin/python -m clipnova_worker
 # then in the web app: CLIPNOVA_WORKER_URL=http://localhost:8000 CLIPNOVA_WORKER_TOKEN=dev-token
 ```
@@ -46,7 +46,11 @@ The first job downloads the weights from Hugging Face (several GB per model).
 | `WORKER_MAX_QUEUE`, `WORKER_TTL_SECONDS`, `WORKER_DATA_DIR`, `PORT` | queue length (429 when full), how long finished videos are kept, scratch directory, port. |
 
 ## Protocol (the web app's `HttpVideoAdapter` is the client; change both together)
-`GET /healthz` | `GET /v1/models` | `POST /v1/jobs {model, prompt, negativePrompt?, seconds, aspectRatio, seed?, steps?}` -> `202 {jobId}` |
+Whole videos (used by the web app): `POST /v1/videos {model, aspectRatio, watermark, seed?, scenes:[{prompt, seconds}]}` -> `202 {videoId}` |
+`GET /v1/videos/{id}` -> `{status, progress, gpuSeconds, scenes:[{index,state,progress,attempt,revision,error?}], regens, error?}` |
+`GET /v1/videos/{id}/video` | `POST /v1/videos/{id}/scenes/{i}/regenerate {prompt?, seed?}` -> `202 {regenId}` | `DELETE /v1/videos/{id}`.
+
+Single clips (used by the smoke test and the core `HttpVideoAdapter`): `GET /healthz` | `GET /v1/models` | `POST /v1/jobs {model, prompt, negativePrompt?, seconds, aspectRatio, seed?, steps?}` -> `202 {jobId}` |
 `GET /v1/jobs/{id}` -> `{status, progress, gpuSeconds, error?{code,message,retryable}}` | `GET /v1/jobs/{id}/video` | `DELETE /v1/jobs/{id}`.
 Errors: `401` bad token, `404` unknown model/job, `422` request the model cannot do, `429` queue full, `409` video not ready.
 An out-of-memory failure is reported `retryable: false` so the app moves on to a lighter model instead of repeating it.

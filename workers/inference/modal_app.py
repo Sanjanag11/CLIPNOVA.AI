@@ -22,7 +22,8 @@ image = (
         "torch", "diffusers>=0.35", "transformers>=4.50", "accelerate", "sentencepiece", "ftfy", "protobuf",
         "imageio", "imageio-ffmpeg", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2.6",
     )
-    .env({"HF_HOME": "/cache/hf", "WORKER_DATA_DIR": "/tmp/clipnova-worker"})
+    # One model for now (LTX-Video: fits a 16-24 GB GPU, portrait, fast). Add more ids, comma separated, to serve more.
+    .env({"HF_HOME": "/cache/hf", "WORKER_DATA_DIR": "/tmp/clipnova-worker", "WORKER_MODELS": os.environ.get("CLIPNOVA_MODELS", "ltx-video")})
     .add_local_python_source("clipnova_worker")
 )
 weights = modal.Volume.from_name("clipnova-hf-cache", create_if_missing=True)

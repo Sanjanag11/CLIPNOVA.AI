@@ -37,7 +37,8 @@ def build_registry(names: list[str] | None = None, *, fake: bool | None = None, 
     fake = fake if fake is not None else os.environ.get("WORKER_FAKE") == "1"
     if fake:
         # Real capability tables, fake rendering: the app sees exactly what the real models would declare.
-        return {pid: FakePipeline(p.capability) for pid, p in real_pipelines(None).items() if pid in names}
+        delay = float(os.environ.get("WORKER_FAKE_DELAY", "0"))  # seconds per scene, to imitate a slow GPU
+        return {pid: FakePipeline(p.capability, delay=delay) for pid, p in real_pipelines(None).items() if pid in names}
     hw = hw if hw is not None else detect()
     ignore = os.environ.get("WORKER_IGNORE_VRAM") == "1"
     out = {}

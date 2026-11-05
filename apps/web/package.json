@@ -12,16 +12,23 @@
   },
   "dependencies": {
     "@clipnova/core": "*",
+    "@electric-sql/pglite": "^0.5.15",
+    "@vercel/blob": "^2.8.2",
     "next": "^16.4.5",
+    "pg": "^8.23.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

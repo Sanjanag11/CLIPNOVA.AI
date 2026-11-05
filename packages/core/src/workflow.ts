@@ -104,6 +104,19 @@ export interface WorkflowDeps {
   maxAttemptsPerModel?: number;
 }
 
+/** Rules every generation request must satisfy, whichever engine runs it. Returns human-readable problems. */
+export function validateGenerationRequest(req: Pick<GenerationRequest, "creativePlan" | "plan" | "mode" | "durationSeconds">): string[] {
+  const issues = [
+    ...validatePlanIntegrity(req.creativePlan),
+    ...checkPlanAllows(req.plan, req.mode, req.durationSeconds),
+  ];
+  const sceneTotal = req.creativePlan.scenes.reduce((a, s) => a + s.durationSeconds, 0);
+  if (sceneTotal !== req.durationSeconds) {
+    issues.push(`scene durations sum to ${sceneTotal}s but ${req.durationSeconds}s was requested`);
+  }
+  return issues;
+}
+
 export async function runGeneration(deps: WorkflowDeps, req: GenerationRequest): Promise<Generation> {
   // 1. Duplicate-request protection: same key returns the same generation.
   const existing = deps.store.findByIdempotencyKey(req.idempotencyKey);
@@ -122,14 +135,7 @@ export async function runGeneration(deps: WorkflowDeps, req: GenerationRequest):
   };
 
   // 2. Cheap validation before any money moves.
-  const planIssues = [
-    ...validatePlanIntegrity(req.creativePlan),
-    ...checkPlanAllows(req.plan, req.mode, req.durationSeconds),
-  ];
-  const sceneTotal = req.creativePlan.scenes.reduce((a, s) => a + s.durationSeconds, 0);
-  if (sceneTotal !== req.durationSeconds) {
-    planIssues.push(`scene durations sum to ${sceneTotal}s but ${req.durationSeconds}s was requested`);
-  }
+  const planIssues = validateGenerationRequest(req);
   if (planIssues.length) return reject(planIssues, "INVALID_REQUEST");
 
   if (deps.store.activeCount(req.userId) >= req.plan.maxConcurrentGenerations) {

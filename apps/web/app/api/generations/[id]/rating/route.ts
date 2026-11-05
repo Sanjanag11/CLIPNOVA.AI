@@ -7,10 +7,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const parsed = RatingBody.safeParse(await req.json());
     if (!parsed.success) throw new ApiError(400, "Invalid request.", "BAD_REQUEST");
     const c = await identify(req, parsed.data.plan, parsed.data.region);
-    const svc = getService();
-    const gen = svc.deps.store.findById(id);
-    if (!gen || gen.userId !== c.userId) throw new ApiError(404, "Video not found.", "NOT_FOUND");
-    svc.ratings.set(id, parsed.data.value);
+    if (!(await (await getService()).rate(c, id, parsed.data.value))) throw new ApiError(404, "Video not found.", "NOT_FOUND");
     return Response.json({ ok: true });
   } catch (e) { return jsonError(e); }
 }

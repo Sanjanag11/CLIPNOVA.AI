@@ -1,4 +1,4 @@
-import { CreativePlanSchema, runGeneration } from "@clipnova/core";
+import { CreativePlanSchema } from "@clipnova/core";
 import { ApiError, effectiveAddons, getService, identify, jsonError } from "@/lib/service";
 import { GenerateBody } from "@/lib/schemas";
 
@@ -10,20 +10,12 @@ export async function POST(req: Request) {
     const plan = CreativePlanSchema.safeParse(b.creativePlan);
     if (!plan.success) throw new ApiError(400, "The scene plan is invalid.", "BAD_PLAN");
     const c = await identify(req, b.plan, b.region);
-    const svc = getService();
-    const key = `${c.userId}:${b.idempotencyKey}`;
-
-    // Start the job and return immediately; the client polls GET /api/generations/:id.
-    // (A durable queue replaces this in-process background run in production.)
-    const run = runGeneration(svc.deps, {
-      userId: c.userId, plan: c.plan, idempotencyKey: key, mode: b.mode, durationSeconds: b.durationSeconds,
-      aspectRatio: b.aspectRatio, region: c.region, modelId: b.modelId, addons: effectiveAddons(svc, b.addons),
-      creativePlan: plan.data, rolloutBucket: c.bucket,
+    const eng = await getService();
+    // Returns quickly: the video renders on the engine and the client polls GET /api/generations/:id.
+    const { id, status } = await eng.start(c, {
+      idempotencyKey: b.idempotencyKey, mode: b.mode, durationSeconds: b.durationSeconds, aspectRatio: b.aspectRatio,
+      modelId: b.modelId, addons: effectiveAddons(eng, b.addons), creativePlan: plan.data,
     });
-    run.catch((e) => console.error("generation failed", e));
-    // runGeneration registers the job synchronously, before its first await.
-    const gen = svc.deps.store.findByIdempotencyKey(key);
-    if (!gen) throw new ApiError(500, "Could not start the video.", "INTERNAL");
-    return Response.json({ id: gen.id, status: gen.status }, { status: 202 });
+    return Response.json({ id, status }, { status: 202 });
   } catch (e) { return jsonError(e); }
 }

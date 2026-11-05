@@ -220,13 +220,22 @@ class LiveMain extends Component {
   async doRegen(index: number) {
     const L = this.state.live;
     if (L.regenBusy[index]) return;
+    const chargedBefore: number = L.job?.credits?.charged ?? 0;
     this.setLive({ regenBusy: { ...L.regenBusy, [index]: true } });
     const r = await this.api(`/api/generations/${L.job.id}/scenes/${index}/regenerate`, "POST", { idempotencyKey: uid() });
     if (!this.mounted) return;
     if (!r.ok) this.notice(r.status === 402 ? "Not enough credits to regenerate this scene." : r.data.error ?? "Couldn't regenerate this scene.");
     else if (!r.data.ok) this.notice("That scene couldn't be regenerated. You were not charged.");
-    const fresh = await this.api(`/api/generations/${L.job.id}`);
+
+    // The live engine regenerates in the background: follow the job until no scene is busy any more.
+    let fresh = await this.api(`/api/generations/${L.job.id}`);
+    for (let i = 0; i < 400 && this.mounted && r.ok && fresh.ok && fresh.data.scenes.some((sc: any) => sc.busy); i++) {
+      this.setState((st: any) => ({ live: { ...st.live, job: fresh.data, me: st.live.me ? { ...st.live.me, balance: fresh.data.balance } : st.live.me } }));
+      await new Promise((res) => setTimeout(res, 1500));
+      fresh = await this.api(`/api/generations/${L.job.id}`);
+    }
     if (!this.mounted) return;
+    if (r.ok && r.data.pending && fresh.ok && fresh.data.credits.charged === chargedBefore) this.notice("That scene couldn't be regenerated. You were not charged.");
     this.setState((st: any) => ({
       live: { ...st.live, job: fresh.ok ? fresh.data : st.live.job, me: st.live.me && fresh.ok ? { ...st.live.me, balance: fresh.data.balance } : st.live.me, regenBusy: { ...st.live.regenBusy, [index]: false } },
     }));

@@ -33,16 +33,19 @@ Application hosting never runs models. Generation is always asynchronous.
 Repo layout:
 - `packages/core`  Business logic, no I/O: Creative Plan schema, credit ledger, plans/pricing,
   model contract + registry, generation workflow. In-memory implementations for tests.
-- `apps/web`       Next.js 16 app.
+- `apps/web`       Next.js 16 app (deploys to Vercel; root directory `apps/web`).
   - `app/_screens/*.tsx` are GENERATED from the prototype (never hand-edit).
   - `app/_live/MainLive.tsx` extends the generated Create screen and replaces its simulated data with the real API.
-  - `app/api/*` route handlers: me, models, quote, plan, generations (+ `[id]`, scene regenerate, rating).
-  - `lib/service.ts` DEMO service: in-memory ledger/store. Engine "simulated" (FakeAdapter, default) or "worker"
-    (set `CLIPNOVA_WORKER_URL` + `CLIPNOVA_WORKER_TOKEN`): HttpVideoAdapter -> worker, scenes stitched by `lib/composer.ts` (ffmpeg).
-  - `lib/catalog.ts` business metadata per live model (price, licence, shapes); `lib/video-store.ts` local disk (R2 later).
-  - `test/api.test.ts` integration tests that call the route handlers directly.
+  - `app/api/*` thin route handlers; they call an `Engine` (`lib/engines/types.ts`) chosen by `lib/service.ts`:
+    - `SimEngine` (default): in memory, fake models, no video.
+    - `LiveEngine` (set `CLIPNOVA_WORKER_URL`): STATELESS, Postgres + a remote GPU worker; works on serverless. See ADR 0003.
+  - `lib/db/` Postgres (`DATABASE_URL`, e.g. Neon) or embedded PGlite for local dev/tests; `SqlLedger` passes the same contract tests as the in-memory ledger.
+  - `lib/live/` the live engine, generation repository, worker client. `lib/files.ts` Vercel Blob (prod) / disk (dev).
+  - `proxy.ts` + `lib/access.ts` fail-closed access gate (`CLIPNOVA_ACCESS_CODE`).
+  - `lib/catalog.ts` business metadata per live model (price, licence, shapes).
 - `workers/inference` Python worker that serves open-source video models (Wan 2.2 5B, LTX-Video, CogVideoX-2B) over HTTP.
-  Pure logic and the HTTP protocol are tested (44 pytest, real ffmpeg); the three diffusers pipelines are NOT yet run on a GPU.
+  It runs whole videos (`/v1/videos`: render scenes, retry, stitch with ffmpeg, regenerate one scene). ffmpeg exists ONLY here.
+  Logic and protocol are tested (75 pytest, real ffmpeg); the three diffusers pipelines are NOT yet run on a GPU.
   `WORKER_FAKE=1` renders ffmpeg test patterns so the whole stack runs without a GPU. Deployment: `modal_app.py` (untested), `docs/free-gpu.md`.
 - `docs/open-source-stack.md` open-source choice per purpose, with licence status (verified vs unverified).
 - `design/prototype` Source of truth for the UI: the six `.dc.html` screens exported from the design canvas.
@@ -54,9 +57,10 @@ Repo layout:
 1. No model-specific logic outside a `VideoModelAdapter`. The workflow only sees `CapabilityProfile` + the adapter interface.
 2. Never route to a model whose licence is not commercially usable (`licence.commercialUse`). Re-check licences on every model upgrade.
 3. Money moves only through the append-only ledger, with an idempotency key on every write.
-4. Register a generation in the store before the first `await` (duplicate-submit protection).
-5. No API keys or credentials in frontend code or in the repo. Use `.env` (git-ignored) / secret manager.
-6. Never claim a feature works without a test or a real run. Vendor figures are labelled "vendor-stated" until benchmarked.
+4. Register a generation (insert its row / store it) before any slow step (duplicate-submit protection).
+5. Serverless rule: the web app keeps NO state in memory that matters, runs no ffmpeg, and never waits on a GPU inside a request.
+6. No API keys or credentials in frontend code or in the repo. Use `.env` (git-ignored) / secret manager.
+7. Never claim a feature works without a test or a real run. Vendor figures are labelled "vendor-stated" until benchmarked.
 
 ## Conventions
 - TypeScript strict, ESM, zod for runtime schemas. Python (inference workers) with type hints.
@@ -67,8 +71,9 @@ Repo layout:
 - `npm install`
 - `npm test`          run all package tests (core + web: vitest)
 - `npm run dev -w @clipnova/web`   run the web app on :3000
-- Live models: `CLIPNOVA_WORKER_URL`, `CLIPNOVA_WORKER_TOKEN`, `CLIPNOVA_WORKER_MODELS` (default wan,ltx,cog), `CLIPNOVA_DATA_DIR`,
-  `CLIPNOVA_POLL_MS`, `CLIPNOVA_SCENE_TIMEOUT_MS`. Worker: see `workers/inference/README.md`.
+- Live engine (see `apps/web/.env.example` and `docs/deploy-vercel.md`): `CLIPNOVA_WORKER_URL`, `CLIPNOVA_WORKER_TOKEN`,
+  `CLIPNOVA_WORKER_MODELS` (e.g. `ltx`), `DATABASE_URL`, `BLOB_READ_WRITE_TOKEN`, `CLIPNOVA_ACCESS_CODE`, `CLIPNOVA_DEMO=1`.
+  Locally without `DATABASE_URL` the embedded database is used under `CLIPNOVA_DATA_DIR`. Worker: `workers/inference/README.md`.
 - Demo mode: `next start` runs in production mode, where the demo identity is OFF (API returns 501 AUTH_NOT_CONFIGURED).
   Set `CLIPNOVA_DEMO=1` to enable it; `CLIPNOVA_DEMO_RENDER_MS` sets the simulated render time per scene (default 1600).
   Try plans and licence territories with `/create?plan=free|creator|pro&region=DE`. NEVER set CLIPNOVA_DEMO in a real deployment.
@@ -77,16 +82,16 @@ Repo layout:
 
 ## Status
 Milestone 1.1 in progress.
-Done and tested: core domain + workflow + worker adapter (91 vitest); web API, ffmpeg composer, video route and a full live-path
-test against a stand-in worker returning real video (32 vitest); Python worker (44 pytest). All six prototype screens run in Next.js.
-Verified end to end with the REAL Python worker in fake-render mode + the real web app + a real browser: plan, generate (3 worker jobs),
-stitched 8 s 720x1280 H.264 video, working player, download link, per-scene regenerate, refunds, region rules.
-NOT yet verified: the three real diffusers pipelines on a GPU (no GPU or Hugging Face access in the build environment).
+Done and tested: core (91 vitest), web (SQL ledger, live engine, API, access gate, database), Python worker (75 pytest).
+Verified end to end locally in a production build: access gate -> plan -> generate (real Python worker rendering ffmpeg test patterns)
+-> stitched 8 s 720x1280 video playing in a real browser -> regenerate one scene (charged only that scene) -> rating; and the worker
+being killed mid-video refunds every credit. See `docs/deploy-vercel.md` for putting it on Vercel + Modal.
+NOT verified (needs your accounts/hardware): the Vercel deployment, Neon, Vercel Blob, Modal, and the real LTX-Video model on a GPU.
 Honest limits:
-- Real models: text-to-video only. Image/video modes need stored uploads (not built), so they show "Not available yet".
-- No audio is produced; the live engine therefore does not charge for voiceover/music/sfx (tested). Prototype copy such as
-  "Hindi voiceover" and "saved to Library" is still shown on the result screen.
-- The planner is basic and deterministic; prompts are not translated to English yet (IndicTrans2 hook exists, unconnected).
-- Moderation is OFF. Library, Model Lab and Admin show the prototype's sample data.
-- State is in memory (lost on restart); no sign-in (demo user per plan), no database, no payments, no durable job queue.
-Next: run the worker on a real GPU and benchmark; then sign-in + Postgres; Claude/open-LLM planner; audio; moderation.
+- Only Text to Video with ONE model (LTX-Video) is live; image/video modes need stored uploads (not built).
+- No audio is produced, so the live engine does not charge for it (tested). Prototype copy such as "Hindi voiceover" and
+  "saved to Library" is still shown on the result screen.
+- Planner is basic and deterministic; prompts are not translated to English yet. Moderation is OFF.
+- Library, Model Lab and Admin show the prototype's sample data. No sign-in (shared demo user per plan behind an access code), no payments.
+- The worker keeps jobs in memory in one container; a restart loses in-flight videos (they are refunded).
+Next: deploy and benchmark LTX on a real GPU; sign-in; Claude/open-LLM planner; audio; moderation.
