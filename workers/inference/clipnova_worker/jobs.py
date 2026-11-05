@@ -75,6 +75,10 @@ class JobManager:
             except Exception:  # noqa: BLE001
                 pass
 
+    @property
+    def pool(self) -> ThreadPoolExecutor:
+        return self._pool
+
     def get(self, jid: str) -> Job | None:
         return self.jobs.get(jid)
 

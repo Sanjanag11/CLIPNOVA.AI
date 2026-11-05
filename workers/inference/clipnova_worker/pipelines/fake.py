@@ -10,10 +10,11 @@ from .base import Capability, GenerateRequest, ModelFailure, ProgressFn, VideoPi
 
 
 class FakePipeline(VideoPipeline):
-    def __init__(self, capability: Capability, delay: float = 0.0, fail_with: ModelFailure | None = None) -> None:
+    def __init__(self, capability: Capability, delay: float = 0.0, fail_with: ModelFailure | None = None, behave=None) -> None:
         self.capability = capability
         self.delay = delay
         self.fail_with = fail_with
+        self.behave = behave  # optional callable(req) -> ModelFailure | None, for per-call failures in tests
         self.calls: list[GenerateRequest] = []
 
     def load(self) -> None:
@@ -26,6 +27,8 @@ class FakePipeline(VideoPipeline):
             on_progress(0.2 * i)
         if self.fail_with:
             raise self.fail_with
+        if self.behave and (failure := self.behave(req)):
+            raise failure
         w, h = size_for(req.aspect_ratio, self.capability.sizes)
         subprocess.run(
             ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi",
