@@ -12,6 +12,9 @@ https://claude.ai/artifact/GZRLgQ45GDHa5EfuAExLnQ
 - Plans (from the approved prototype): Free 120 credits (<=12 s, 720p, watermark), Creator 900, Pro 2500. Prices are still [PRICE] placeholders.
 - Credits per video = model rate x seconds (Wan 6, LTX 3, Hunyuan 7, Cog 4, VACE 6, SVD 3, LongCat 7, Mochi 5, Open-Sora 4 in the prototype; unverified placeholders until Phase 2) + voiceover 1 per 4 s + music 2 + sound effects 1; captions free.
 - "Auto" model picks by mode (prototype: text/image -> Wan 2.2, video -> VACE). A model the user picks is never silently swapped.
+- Licence obligations (verified 6 Nov 2026, docs/open-source-stack.md): LTX-Video (v0.9.6+) is free below $10M annual revenue and requires
+  user terms carrying its use restrictions plus a disclosure that content is machine-generated (NOT BUILT; paid plans have no visible watermark).
+  HunyuanVideo 1.5 also requires labelling AI output. Wan 2.2 and CogVideoX-2B are Apache-2.0.
 - Global market: model licences can exclude territories. HunyuanVideo 1.5 excludes the EU, UK and South Korea, so it is never routed for users there (`licence.excludedTerritories`, enforced in `ModelRegistry.select`).
 - Launch languages: en, hi, mr, kn, gu, bn. Languages are data; adding one must not need workflow changes.
 - Users describe ideas in their own language; video prompts are always rendered in English; narration/captions stay in the user's language.

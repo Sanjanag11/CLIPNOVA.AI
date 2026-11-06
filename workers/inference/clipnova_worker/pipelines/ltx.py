@@ -4,7 +4,9 @@ UNTESTED ON A GPU. Written against the diffusers LTX docs (LTXPipeline, 768x512 
 decode_timestep/decode_noise_scale). Image-to-video via LTXConditionPipeline is documented but needs an input
 image, which the app cannot store yet, so only t2v is offered.
 
-LICENCE: check the checkpoint's licence on its model card before a public launch.
+LICENCE (read on Hugging Face, 6 Nov 2026): the top-level checkpoint loaded here is an OLDER v0.9.x model (RAIL-M); v0.9.6+ are under the
+"LTXV Open Weights License 0.X" (free below $10M annual revenue, AI-generated content must be disclosed, use restrictions must be passed to users).
+Newer, better checkpoints exist in the same repo (e.g. ltxv-2b-0.9.8-distilled) but loading them is untested. See docs/open-source-stack.md.
 """
 from __future__ import annotations
 
@@ -22,8 +24,8 @@ class LTXVideo(VideoPipeline):
         id="ltx-video", name="LTX-Video", modes=("t2v",),
         aspect_ratios=("9:16", "16:9", "1:1", "4:5"), max_seconds=5.0, fps=24,
         sizes={"landscape": (768, 512), "portrait": (512, 768)},
-        min_vram_gb=12.0, licence="ltx-video-open-weights",
-        notes="verify the checkpoint licence before public launch; doc example size 768x512",
+        min_vram_gb=12.0, licence="ltxv-open-weights-0.x",
+        notes="loads an older v0.9.x checkpoint; see docs/open-source-stack.md for licence terms; doc example size 768x512",
     )
 
     def __init__(self, hw: Hardware | None = None) -> None:

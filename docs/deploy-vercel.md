@@ -73,7 +73,7 @@ Testers share the demo credits of the plan chosen in the address bar (`/create?p
 ## What this test does NOT include
 Only Text to Video with LTX-Video (image and video modes say "Not available yet"); no audio; no safety/moderation checks;
 no sign-in, payments or per-user accounts; the Library, Model Lab and Admin screens still show the prototype's sample data.
-LTX-Video's licence must be verified on its model card before any public launch.
+LTX-Video's licence was read on its Hugging Face repo (docs/open-source-stack.md): free below $10M annual revenue, but your terms must pass on its use restrictions and AI-generated videos must be disclosed as such. That disclosure is not built yet, so keep this a private test.
 
 ## If something goes wrong
 | You see | Likely cause |

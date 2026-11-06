@@ -25,7 +25,7 @@ const ALL_ASPECTS: AspectRatio[] = ["9:16", "16:9", "1:1", "4:5"];
 
 export const WORKER_CATALOG: CatalogEntry[] = [
   { id: "wan", name: "Wan 2.2", workerId: "wan22-ti2v-5b", creditsPerSecond: 6, licenceId: "apache-2.0", aspects: ALL_ASPECTS, maxClipSeconds: 5, fps: 24 },
-  { id: "ltx", name: "LTX-Video", workerId: "ltx-video", creditsPerSecond: 3, licenceId: "ltx-video-open-weights", licenceNote: "VERIFY the checkpoint licence before a public launch", aspects: ALL_ASPECTS, maxClipSeconds: 5, fps: 24 },
+  { id: "ltx", name: "LTX-Video", workerId: "ltx-video", creditsPerSecond: 3, licenceId: "ltxv-open-weights-0.x", licenceNote: "free below $10M annual revenue; users must be bound by the use restrictions and AI-generated content disclosed (docs/open-source-stack.md)", aspects: ALL_ASPECTS, maxClipSeconds: 5, fps: 24 },
   { id: "cog", name: "CogVideoX", workerId: "cogvideox-2b", creditsPerSecond: 4, licenceId: "apache-2.0", aspects: ["16:9"], maxClipSeconds: 6, fps: 8 },
 ];
 
