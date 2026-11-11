@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: clipnova-worker
+Version: 0.1.0
+Summary: ClipNova inference worker: serves open-source video models over HTTP
+Requires-Python: >=3.10
+Requires-Dist: fastapi>=0.110
+Requires-Dist: uvicorn>=0.29
+Requires-Dist: pydantic>=2.6
+Provides-Extra: gpu
+Requires-Dist: torch; extra == "gpu"
+Requires-Dist: diffusers>=0.35; extra == "gpu"
+Requires-Dist: transformers>=4.50; extra == "gpu"
+Requires-Dist: accelerate; extra == "gpu"
+Requires-Dist: sentencepiece; extra == "gpu"
+Requires-Dist: ftfy; extra == "gpu"
+Requires-Dist: imageio; extra == "gpu"
+Requires-Dist: imageio-ffmpeg; extra == "gpu"
+Requires-Dist: protobuf; extra == "gpu"
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: httpx; extra == "dev"

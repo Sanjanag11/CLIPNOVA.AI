@@ -14,6 +14,7 @@ uploaded images yet. A model that does not fit the detected GPU is **not served*
 ## Try your own prompts on a free GPU (start here)
 Open `notebooks/prompt_playground.ipynb` in Google Colab (GPU on): type a prompt, press play, the video appears. Or in Python:
 `from clipnova_worker.playground import Playground; Playground().play("a cat on a skateboard")`.
+Light install (does not touch the torch that Colab already has): `pip install diffusers transformers accelerate sentencepiece ftfy imageio imageio-ffmpeg protobuf && pip install --no-deps -e .`
 
 ## Test the models on a free GPU
 Open `notebooks/test_models.ipynb` in Google Colab or Kaggle (turn the GPU on), run the cells, and watch one clip per model.

@@ -15,7 +15,8 @@ Free notebooks are for **development**, not for serving real users: they stop wi
 ## Kaggle / Colab recipe (untested)
 ```bash
 # in a notebook cell, GPU on, internet on
-!git clone <your repo> && cd CLIPNOVA.AI/workers/inference && pip install -q -e ".[gpu]"
+!git clone <your repo> && cd CLIPNOVA.AI/workers/inference
+!pip install -q diffusers transformers accelerate sentencepiece ftfy imageio imageio-ffmpeg protobuf fastapi uvicorn pydantic && pip install -q --no-deps -e .
 import os; os.environ["WORKER_TOKEN"] = "<long random string>"
 !nohup python -m clipnova_worker > worker.log 2>&1 &
 # a free public URL without an account:
