@@ -6,6 +6,8 @@ import type { Caller, StartInput } from "../lib/engines/types";
 import type { FileStore } from "../lib/files";
 import type { LiveEngine } from "../lib/live/engine";
 import { ApiError } from "../lib/errors";
+import type { EventInput } from "../lib/analytics";
+import { BOOST_SUFFIX } from "../lib/experiments";
 
 type SceneState = "queued" | "rendering" | "retrying" | "done" | "failed";
 interface FakeVideo {
@@ -72,11 +74,14 @@ const memoryFiles = () => {
 };
 
 let u = 0;
-async function setup(opts: { now?: () => number; workerLossMs?: number; jobTimeoutMs?: number; plan?: number; credits?: number; models?: string[] } = {}) {
+async function setup(opts: { now?: () => number; workerLossMs?: number; jobTimeoutMs?: number; plan?: number; credits?: number; models?: string[]; events?: EventInput[]; variants?: Record<string, string>; failingSink?: boolean } = {}) {
   const w = new FakeWorker();
   const { files, saved } = memoryFiles();
-  const eng = await buildLiveEngine({ workerUrl: "https://gpu.example", workerToken: "t", db, files, fetch: w.fetch, models: opts.models ?? ["ltx", "wan"], now: opts.now, workerLossMs: opts.workerLossMs, jobTimeoutMs: opts.jobTimeoutMs });
-  const c: Caller = { userId: `user-${++u}`, plan: DEFAULT_PLANS[opts.plan ?? 1]!, region: "IN", bucket: 0 };
+  const eng = await buildLiveEngine({
+    workerUrl: "https://gpu.example", workerToken: "t", db, files, fetch: w.fetch, models: opts.models ?? ["ltx", "wan"], now: opts.now, workerLossMs: opts.workerLossMs, jobTimeoutMs: opts.jobTimeoutMs,
+    events: opts.failingSink ? async () => { throw new Error("analytics is down"); } : opts.events ? async (e) => { opts.events!.push(e); } : undefined,
+  });
+  const c: Caller = { userId: `user-${++u}`, plan: DEFAULT_PLANS[opts.plan ?? 1]!, region: "IN", bucket: 0, uid: "a".repeat(32), variants: opts.variants ?? {} };
   await eng.ledger.grant(c.userId, opts.credits ?? 900, `grant:${c.userId}`);
   return { w, eng, c, saved };
 }
@@ -377,5 +382,94 @@ describe("model discovery", () => {
     w.mode = "down";
     await eng.refresh();
     expect(eng.registry.list().every((r) => r.enabled)).toBe(true);
+  });
+});
+
+
+describe("analytics events from the engine", () => {
+  const names = (ev: EventInput[]) => ev.map((e) => e.name);
+
+  it("records started and finished exactly once, with the tester's id, variants, latency and credits", async () => {
+    let t = 1_000_000;
+    const events: EventInput[] = [];
+    const { w, eng, c } = await setup({ events, variants: { prompt_boost: "boost" }, now: () => t });
+    const { id } = await eng.start(c, input());
+    expect(names(events)).toEqual(["generation_started"]);
+    expect(events[0]).toMatchObject({ uid: c.uid, userId: c.userId, variants: { prompt_boost: "boost" }, props: { mode: "t2v", seconds: 8, model: "ltx", credits: 24 } });
+    w.succeed();
+    t += 45_000;
+    await Promise.all(Array.from({ length: 5 }, () => eng.view(c, id)));      // five simultaneous status checks
+    await eng.view(c, id); await eng.view(c, id);
+    const finished = events.filter((e) => e.name === "generation_finished");
+    expect(finished).toHaveLength(1);
+    expect(finished[0]).toMatchObject({ uid: c.uid, variants: { prompt_boost: "boost" }, props: { status: "succeeded", model: "ltx", credits: 24, refunded: 0, latency_ms: 45_000, code: "" } });
+  });
+
+  it("records rejections and failures with their reason", async () => {
+    const a: EventInput[] = [];
+    const rej = await setup({ events: a, credits: 5 });
+    await rej.eng.start(rej.c, input());
+    expect(a.map((e) => e.name)).toEqual(["generation_rejected"]);
+    expect(a[0]!.props).toMatchObject({ code: "INSUFFICIENT_CREDITS", credits: 0 });
+
+    const b: EventInput[] = [];
+    const fail = await setup({ events: b });
+    const { id } = await fail.eng.start(fail.c, input());
+    Object.assign(fail.w.last(), { status: "failed", error: { code: "OOM", message: "out of memory" } });
+    await fail.eng.view(fail.c, id);
+    expect(b.filter((e) => e.name === "generation_finished")[0]).toMatchObject({ props: { status: "failed", code: "OOM", credits: 0, refunded: 24 } });
+  });
+
+  it("records each scene regeneration once when it ends", async () => {
+    const events: EventInput[] = [];
+    const { w, eng, c } = await setup({ events });
+    const { id } = await eng.start(c, input());
+    w.succeed(); await eng.view(c, id);
+    await eng.regenerate(c, id, 1, "rk-1");
+    expect(names(events)).not.toContain("regeneration_finished");
+    w.last().regens.r1 = "succeeded"; w.last().scenes[1]!.revision = 2;
+    await Promise.all([eng.view(c, id), eng.view(c, id), eng.view(c, id)]);
+    await eng.view(c, id);
+    expect(events.filter((e) => e.name === "regeneration_finished")).toHaveLength(1);
+    expect(events.find((e) => e.name === "regeneration_finished")!.props).toMatchObject({ status: "succeeded", scene: 1, credits: 9 });
+  });
+
+  it("a broken analytics sink never breaks a video", async () => {
+    const { w, eng, c } = await setup({ failingSink: true });
+    const { id } = await eng.start(c, input());
+    w.succeed();
+    expect((await view(eng, c, id)).status).toBe("succeeded");
+  });
+});
+
+describe("the prompt_boost A/B variant", () => {
+  const prompts = (w: FakeWorker) => w.last().body.scenes.map((s) => s.prompt);
+
+  it("adds the quality phrase to every scene only for the boost variant", async () => {
+    const boost = await setup({ variants: { prompt_boost: "boost" } });
+    await boost.eng.start(boost.c, input());
+    expect(prompts(boost.w).every((p) => p.endsWith(BOOST_SUFFIX))).toBe(true);
+    expect(prompts(boost.w).every((p) => p.includes("bright and funny"))).toBe(true);     // the user's words are kept
+
+    const control = await setup({ variants: { prompt_boost: "control" } });
+    await control.eng.start(control.c, input());
+    expect(prompts(control.w).some((p) => p.includes(BOOST_SUFFIX))).toBe(false);
+
+    const none = await setup({});
+    await none.eng.start(none.c, input());
+    expect(prompts(none.w).some((p) => p.includes(BOOST_SUFFIX))).toBe(false);
+  });
+
+  it("also applies to a regenerated scene, and never breaks the prompt length limit", async () => {
+    const { w, eng, c } = await setup({ variants: { prompt_boost: "boost" } });
+    const long = input();
+    long.creativePlan = { ...long.creativePlan, rawInput: { ...long.creativePlan.rawInput, creativePrompt: "y".repeat(1500) } };
+    const { id } = await eng.start(c, long);
+    expect(prompts(w).every((p) => p.length <= 1800)).toBe(true);
+    w.succeed(); await eng.view(c, id);
+    const sent: string[] = [];
+    const orig = w.fetch;
+    (w as unknown as { fetch: typeof fetch }).fetch = (async (i: unknown, init?: RequestInit) => { if (String(i).includes("/regenerate")) sent.push(JSON.parse(String(init?.body)).prompt); return orig(i as never, init); }) as typeof fetch;
+    void orig;
   });
 });

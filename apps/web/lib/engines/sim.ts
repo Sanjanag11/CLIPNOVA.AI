@@ -3,6 +3,7 @@ import {
   type CapabilityProfile, type JobView, type Mode, type WorkflowDeps,
 } from "@clipnova/core";
 import { ApiError } from "../errors";
+import { safeEmit, type EventSink } from "../analytics";
 import type { Caller, Engine, GenerationView, RegenOutcome, StartInput } from "./types";
 
 /**
@@ -42,7 +43,7 @@ export class SimEngine implements Engine {
   private seq = 0;
   private readonly deps: WorkflowDeps;
 
-  constructor(delayMs = Number(process.env.CLIPNOVA_DEMO_RENDER_MS ?? 1600)) {
+  constructor(delayMs = Number(process.env.CLIPNOVA_DEMO_RENDER_MS ?? 1600), private readonly events?: EventSink) {
     for (const r of MODELS) this.registry.register(new FakeAdapter(profile(r), { delayMs }));
     // Prototype's Auto recommendations: text/image -> Wan 2.2, video -> VACE.
     this.registry.autoOrder = { t2v: ["wan"], i2v: ["wan"], v2v: ["vace"] };
@@ -71,7 +72,11 @@ export class SimEngine implements Engine {
     runGeneration(this.deps, {
       userId: c.userId, plan: c.plan, idempotencyKey: key, mode: i.mode, durationSeconds: i.durationSeconds, aspectRatio: i.aspectRatio,
       region: c.region, modelId: i.modelId, addons: i.addons, creativePlan: i.creativePlan, rolloutBucket: c.bucket,
+    }).then((g) => {
+      const base = { uid: c.uid, userId: c.userId, variants: c.variants };
+      safeEmit(this.events, ({ ...base, name: g.status === "rejected" ? "generation_rejected" : "generation_finished", props: { status: g.status, model: g.scenes[0]?.modelId ?? "", seconds: i.durationSeconds, credits: g.creditsCharged, refunded: g.creditsRefunded, code: g.errorCode ?? "" } }));
     }).catch((e) => console.error("generation failed", e));
+    safeEmit(this.events, ({ uid: c.uid, userId: c.userId, variants: c.variants, name: "generation_started", props: { mode: i.mode, seconds: i.durationSeconds, aspect: i.aspectRatio } }));
     const gen = this.store.findByIdempotencyKey(key);
     if (!gen) throw new ApiError(500, "Could not start the video.", "INTERNAL");
     return { id: gen.id, status: gen.status };

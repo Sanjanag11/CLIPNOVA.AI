@@ -1,6 +1,12 @@
 import type { Addons, AspectRatio, CreativePlan, Ledger, Mode, ModelRegistry, Plan, PricingConfig, Quote } from "@clipnova/core";
 
-export interface Caller { userId: string; plan: Plan; region: string; bucket: number }
+export interface Caller {
+  userId: string; plan: Plan; region: string; bucket: number;
+  /** Anonymous tester id (set by proxy.ts); absent in local tests. */
+  uid?: string;
+  /** This tester's A/B variants, by experiment id. */
+  variants: Record<string, string>;
+}
 
 export interface StartInput {
   idempotencyKey: string;

@@ -7,7 +7,7 @@ export interface LiveScene {
   index: number; durationSeconds: number; action: string; state: SceneState; progress: number; attempt: number; revision: number;
   errorCode?: string; credits: number; settled?: "captured" | "released";
 }
-export interface RegenRecord { workerRegenId: string; sceneIndex: number; cost: number; key: string; status: "running" | "succeeded" | "failed" }
+export interface RegenRecord { workerRegenId: string; sceneIndex: number; cost: number; key: string; status: "running" | "succeeded" | "failed"; reported?: boolean }
 
 /** Everything about one generation, stored as JSON so the engine stays stateless between requests. */
 export interface LiveData {
@@ -23,6 +23,11 @@ export interface LiveData {
   error?: { code: string; reasons: string[] };
   startedAt: number; lastWorkerOkAt: number;
   regens: Record<string, RegenRecord>;
+  /** The tester's A/B variants when the video was made (also stamped on every event). */
+  variants?: Record<string, string>;
+  uid?: string;
+  /** Set once the "finished" analytics event has been sent, so settling twice can never double-count. */
+  finishedEvent?: boolean;
   lease?: number;
 }
 

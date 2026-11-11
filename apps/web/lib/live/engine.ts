@@ -3,6 +3,8 @@ import {
   type Ledger, type ModelRegistry, type PricingConfig, type SceneRequest,
 } from "@clipnova/core";
 import { ApiError } from "../errors";
+import { safeEmit, type EventInput, type EventSink } from "../analytics";
+import { BOOST_SUFFIX } from "../experiments";
 import type { FileStore } from "../files";
 import type { Caller, Engine, GenerationView, RegenOutcome, StartInput } from "../engines/types";
 import { GenerationRepo, type GenRow, type LiveData, type LiveScene, type RegenRecord } from "./repo";
@@ -18,6 +20,7 @@ export interface LiveEngineDeps {
   /** App-level model id -> id on the worker. */
   workerIds: Record<string, string>;
   moderator: { checkText(text: string): Promise<string[]> };
+  events?: EventSink;
   newId: () => string;
   now?: () => number;
   /** A job older than this is failed and refunded. */
@@ -42,6 +45,17 @@ export class LiveEngine implements Engine {
   get registry() { return this.d.registry; }
   get pricing() { return this.d.pricing; }
   private now() { return (this.d.now ?? Date.now)(); }
+
+  /** Analytics: fire and forget, never allowed to fail a request. */
+  private emit(data: LiveData, name: string, props: Record<string, unknown>) {
+    safeEmit(this.d.events, { uid: data.uid, userId: data.userId, variants: data.variants, name, props } satisfies EventInput);
+  }
+
+  /** The English prompt for one scene. The prompt_boost A/B variant appends a quality phrase. */
+  private scenePrompt(data: LiveData, req: SceneRequest): string {
+    const base = buildPrompt(req);
+    return data.variants?.prompt_boost === "boost" ? `${base}. ${BOOST_SUFFIX}`.slice(0, 1800) : base;
+  }
 
   private discoveredAt = 0;
   /**
@@ -70,6 +84,7 @@ export class LiveEngine implements Engine {
       userId: c.userId,
       request: { mode: i.mode, durationSeconds: i.durationSeconds, aspectRatio: i.aspectRatio, modelId: i.modelId, region: c.region, planId: c.plan.id, watermark: c.plan.watermark, creativePlan: plan },
       creditsQuoted: 0, creditsCharged: 0, creditsRefunded: 0, stage: "checking", progress: 0, startedAt: now, lastWorkerOkAt: now, regens: {},
+      variants: c.variants, uid: c.uid,
       scenes: plan.scenes.map((s) => ({ index: s.index, durationSeconds: s.durationSeconds, action: s.action, state: "queued", progress: 0, attempt: 0, revision: 0, credits: 0 })),
     };
     // Registered first, so a double click or client retry finds this job instead of starting a second one.
@@ -79,6 +94,7 @@ export class LiveEngine implements Engine {
     const reject = async (code: string, reasons: string[], status = "rejected") => {
       data.error = { code, reasons }; data.stage = "done"; data.progress = 1;
       await this.d.repo.save(id, status, data);
+      this.emit(data, status === "rejected" ? "generation_rejected" : "generation_finished", { status, code, model: data.model?.id ?? "", seconds: i.durationSeconds, credits: 0 });
       return { id, status };
     };
 
@@ -112,7 +128,7 @@ export class LiveEngine implements Engine {
     try {
       data.workerVideoId = await this.d.worker.createVideo({
         model: data.model.workerId, aspectRatio: i.aspectRatio, watermark: c.plan.watermark, seed: Number(`${Date.now()}`.slice(-9)),
-        scenes: plan.scenes.map((s) => ({ prompt: buildPrompt(this.sceneReq(id, plan, s.index, i.mode, i.aspectRatio, s.action)), seconds: s.durationSeconds })),
+        scenes: plan.scenes.map((s) => ({ prompt: this.scenePrompt(data, this.sceneReq(id, plan, s.index, i.mode, i.aspectRatio, s.action)), seconds: s.durationSeconds })),
       });
     } catch (e) {
       await this.releaseAll(id, data);
@@ -121,6 +137,7 @@ export class LiveEngine implements Engine {
     }
     data.stage = "rendering";
     await this.d.repo.save(id, "running", data);
+    this.emit(data, "generation_started", { mode: i.mode, seconds: i.durationSeconds, aspect: i.aspectRatio, model: data.model.id, credits: data.creditsQuoted });
     return { id, status: "running" };
   }
 
@@ -185,8 +202,22 @@ export class LiveEngine implements Engine {
       }
     }
     // 2. single-scene regenerations
+    const regensBefore = JSON.stringify(Object.values(data.regens).map((r) => r.status));
     if (Object.values(data.regens).some((r) => r.status === "running")) status = await this.refreshRegens(id, data, status, now);
+    const sendFinished = status !== "running" && !data.finishedEvent;
+    if (sendFinished) data.finishedEvent = true;
     await this.d.repo.save(id, status, data);
+    // Analytics after the save, so the counts only ever reflect settled state (and only once: the flag is saved with the row).
+    if (sendFinished) {
+      this.emit(data, "generation_finished", {
+        status, code: data.error?.code ?? "", model: data.model?.id ?? "", seconds: data.request.durationSeconds,
+        credits: data.creditsCharged, refunded: data.creditsRefunded, latency_ms: this.now() - data.startedAt,
+      });
+    }
+    if (regensBefore !== JSON.stringify(Object.values(data.regens).map((r) => r.status))) {
+      for (const r of Object.values(data.regens)) if (r.status !== "running" && !r.reported) { r.reported = true; this.emit(data, "regeneration_finished", { status: r.status, scene: r.sceneIndex, credits: r.status === "succeeded" ? r.cost : 0 }); }
+      await this.d.repo.save(id, status, data);
+    }
   }
 
   /** Returns the worker's view, or "lost" (it forgot the job), "down" (unreachable for too long), or undefined (a blip). */
@@ -303,7 +334,7 @@ export class LiveEngine implements Engine {
       let workerRegenId: string;
       try {
         workerRegenId = await this.d.worker.regenerate(data.workerVideoId, index, {
-          prompt: buildPrompt(this.sceneReq(id, plan, index, data.request.mode, data.request.aspectRatio, scene.action)),
+          prompt: this.scenePrompt(data, this.sceneReq(id, plan, index, data.request.mode, data.request.aspectRatio, scene.action)),
           seed: Number(`${Date.now()}`.slice(-9)),
         });
       } catch (e) {

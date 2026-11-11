@@ -30,6 +30,17 @@ CREATE TABLE IF NOT EXISTS generations (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS generations_user_status ON generations (user_id, status);
+CREATE TABLE IF NOT EXISTS events (
+  id BIGSERIAL PRIMARY KEY,
+  ts TIMESTAMPTZ NOT NULL DEFAULT now(),
+  uid TEXT,
+  user_id TEXT,
+  name TEXT NOT NULL,
+  props JSONB NOT NULL DEFAULT '{}'::jsonb,
+  variants JSONB NOT NULL DEFAULT '{}'::jsonb
+);
+CREATE INDEX IF NOT EXISTS events_name_ts ON events (name, ts);
+CREATE INDEX IF NOT EXISTS events_uid ON events (uid);
 CREATE TABLE IF NOT EXISTS ratings (
   generation_id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,

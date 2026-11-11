@@ -3,6 +3,7 @@ import {
   DEFAULT_PRICING, ModelRegistry, type CapabilityProfile, type SceneRequest, type SceneResult, type VideoModelAdapter,
 } from "@clipnova/core";
 import { LIVE_MODES, WORKER_CATALOG } from "../catalog";
+import type { EventSink } from "../analytics";
 import { getDb, type Db } from "../db";
 import { SqlLedger } from "../db/sql-ledger";
 import { getFileStore, type FileStore } from "../files";
@@ -30,6 +31,7 @@ export interface LiveConfig {
   jobTimeoutMs?: number;
   workerLossMs?: number;
   now?: () => number;
+  events?: EventSink;
 }
 
 export async function buildLiveEngine(cfg: LiveConfig): Promise<LiveEngine> {
@@ -52,7 +54,7 @@ export async function buildLiveEngine(cfg: LiveConfig): Promise<LiveEngine> {
     files: cfg.files ?? getFileStore(), workerIds,
     // NOT ENABLED yet: real moderation providers arrive in M1.3.
     moderator: { checkText: async () => [] },
-    newId: () => `gen_${randomUUID()}`, jobTimeoutMs: cfg.jobTimeoutMs, workerLossMs: cfg.workerLossMs, now: cfg.now,
+    newId: () => `gen_${randomUUID()}`, jobTimeoutMs: cfg.jobTimeoutMs, workerLossMs: cfg.workerLossMs, now: cfg.now, events: cfg.events,
   });
 }
 
