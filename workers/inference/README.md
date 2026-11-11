@@ -11,7 +11,11 @@ Serves open-source video models over a small HTTP API. The web app never runs mo
 Only text-to-video is offered. Image-to-video for Wan TI2V-5B is not documented in diffusers, and the app cannot store
 uploaded images yet. A model that does not fit the detected GPU is **not served** (a free 16 GB T4 serves LTX and CogVideoX, not Wan).
 
-## Test the models on a free GPU (start here)
+## Try your own prompts on a free GPU (start here)
+Open `notebooks/prompt_playground.ipynb` in Google Colab (GPU on): type a prompt, press play, the video appears. Or in Python:
+`from clipnova_worker.playground import Playground; Playground().play("a cat on a skateboard")`.
+
+## Test the models on a free GPU
 Open `notebooks/test_models.ipynb` in Google Colab or Kaggle (turn the GPU on), run the cells, and watch one clip per model.
 Or, on any machine with a GPU: `pip install -e ".[gpu]" && python -m clipnova_worker.smoke` (no server, no web app).
 `--fake` checks the plumbing without a GPU.
@@ -19,7 +23,7 @@ Or, on any machine with a GPU: `pip install -e ".[gpu]" && python -m clipnova_wo
 ## Run without a GPU (development and tests)
 ```bash
 python -m venv .venv && .venv/bin/pip install -e ".[dev]"
-.venv/bin/python -m pytest                      # 75 tests, real ffmpeg
+.venv/bin/python -m pytest                      # 86 tests, real ffmpeg
 WORKER_FAKE=1 WORKER_TOKEN=dev-token .venv/bin/python -m clipnova_worker
 # then in the web app: CLIPNOVA_WORKER_URL=http://localhost:8000 CLIPNOVA_WORKER_TOKEN=dev-token
 ```
