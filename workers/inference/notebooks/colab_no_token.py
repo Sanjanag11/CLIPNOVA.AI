@@ -8,14 +8,20 @@ from diffusers.utils import export_to_video
 from IPython.display import Video, display
 
 NEGATIVE = "worst quality, inconsistent motion, blurry, jittery, distorted"
-print("Loading LTX-Video (the first time this downloads several GB, 5-15 minutes)...")
-t0 = time.time()
-pipe = LTXPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)  # a free T4 has no bfloat16
-pipe.enable_model_cpu_offload()   # keeps GPU memory low
-pipe.vae.enable_tiling()
-print(f"Loaded in {time.time() - t0:.0f}s. Now call play(\"your prompt\")")
 
-history = []
+if "pipe" in globals():
+    # You ran this cell twice by mistake. Loading again would need double the memory and can crash Colab, so do nothing.
+    print("The model is already loaded. Nothing to do: just call play(\"your prompt\").")
+else:
+    print("Loading LTX-Video (the first time this downloads about 28 GB, 5-15 minutes; later loads read from disk)...")
+    t0 = time.time()
+    pipe = LTXPipeline.from_pretrained("Lightricks/LTX-Video", torch_dtype=torch.float16)  # a free T4 has no bfloat16
+    pipe.enable_model_cpu_offload()   # keeps GPU memory low
+    pipe.vae.enable_tiling()
+    print(f"Loaded in {time.time() - t0:.0f}s. Now call play(\"your prompt\")")
+
+if "history" not in globals():
+    history = []
 
 
 def play(prompt, seconds=2, aspect="9:16", steps=20, seed=7):
@@ -50,4 +56,5 @@ def summary():
         print(f"{i}. {s:g}s {a} {st} steps, {secs}s render: {p[:90]}")
 
 
-play("A fluffy orange cat rides a skateboard down a sunny Indian street, handheld vlog style, bright morning light")
+if not history:
+    play("A fluffy orange cat rides a skateboard down a sunny Indian street, handheld vlog style, bright morning light")
