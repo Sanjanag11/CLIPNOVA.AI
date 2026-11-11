@@ -12,6 +12,7 @@ Only text-to-video is offered. Image-to-video for Wan TI2V-5B is not documented 
 uploaded images yet. A model that does not fit the detected GPU is **not served** (a free 16 GB T4 serves LTX and CogVideoX, not Wan).
 
 ## Try your own prompts on a free GPU (start here)
+No GitHub token? Paste `notebooks/colab_no_token.py` into one Colab cell (after `!pip install -q diffusers transformers accelerate sentencepiece ftfy imageio imageio-ffmpeg protobuf`).
 Open `notebooks/prompt_playground.ipynb` in Google Colab (GPU on): type a prompt, press play, the video appears. Or in Python:
 `from clipnova_worker.playground import Playground; Playground().play("a cat on a skateboard")`.
 Light install (does not touch the torch that Colab already has): `pip install diffusers transformers accelerate sentencepiece ftfy imageio imageio-ffmpeg protobuf && pip install --no-deps -e .`
